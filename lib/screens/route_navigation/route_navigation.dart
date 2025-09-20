@@ -71,7 +71,7 @@ class RouteNavigationScreen extends StatefulWidget {
   static IFitCameraLayer defaultFitCameraLayer(TrufiMapController controller) {
     return FitCameraLayer(
       controller,
-      padding: const EdgeInsets.only(bottom: 200, right: 30, left: 30, top: 50),
+      padding: const EdgeInsets.only(bottom: 200, right: 30, left: 30, top: 100),
       // debugFlag: true,
     );
   }
@@ -186,6 +186,17 @@ class _RouteNavigationScreenState extends State<RouteNavigationScreen> {
                   final destination = routingMapComponent.destination;
                   return Stack(
                     children: [
+                      SafeArea(
+                        child: IconButton(
+                          onPressed: () {},
+                          icon: const Icon(Icons.menu),
+                          style: const ButtonStyle(
+                            backgroundColor: WidgetStatePropertyAll(
+                              Colors.white,
+                            ),
+                          ),
+                        ),
+                      ),
                       LocationSearchBar(
                         onSaveFrom: (location) async {
                           await routingMapComponent.addOrigin(location);
@@ -225,7 +236,7 @@ class _RouteNavigationScreenState extends State<RouteNavigationScreen> {
                                 bottom: math.min(currentHeight, height),
                                 right: 30,
                                 left: 30,
-                                top: 80,
+                                top: 100,
                               ),
                             );
                           },

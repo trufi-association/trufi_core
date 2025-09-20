@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:trufi_core/localization/app_localization.dart';
@@ -33,84 +35,111 @@ class ItineraryDetailsCard extends StatelessWidget {
   updateCamera;
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.only(left: 20, right: 16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          TextButton(
-            onPressed: () async {
-              TicketSelector.show(context);
-            },
-            child: Text("Buy Ticket"),
-          ),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
+    final theme = Theme.of(context);
+    return Column(
+      children: [
+        Row(
+          children: [
+            BackButton(
+              onPressed: () {
+                onRouteDetailsViewChanged(false);
+              },
+              // icon: Icon(Icons.arrow_back_ios),
+              // isCompact: true,
+            ),
+            Text(
+              "Public transport",
+              style: theme.textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            Spacer(),
+            TrufiIconButton(
+              onPressed: () {},
+              icon: Transform.rotate(
+                angle: math.pi / 2,
+                child: Icon(Icons.tune),
+              ),
+              isCompact: true,
+            ),
+            SizedBox(width: 4),
+            TrufiIconButton(
+              onPressed: () {},
+              icon: Icon(Icons.ios_share),
+              isCompact: true,
+            ),
+            SizedBox(width: 16),
+          ],
+        ),
+        Container(
+          padding: EdgeInsets.only(left: 20, right: 16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Expanded(child: ItineraryPath(itinerary: itinerary)),
-              SizedBox(width: 4),
-              TrufiIconButton(
-                onPressed: () {
-                  onRouteDetailsViewChanged(false);
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  SizedBox(width: 4),
+                  Expanded(child: ItineraryPath(itinerary: itinerary)),
+                  SizedBox(width: 4),
+
+                  OutlinedButton(
+                    onPressed: () async {
+                      TicketSelector.show(context);
+                    },
+                    child: Text("Buy Ticket"),
+                  ),
+                ],
+              ),
+              SizedBox(height: 24),
+              ItineraryLocationTile(
+                text: plan.from?.name ?? '',
+                icon: FromMarker(),
+                moveTo: () {
+                  updateCamera(
+                    target: LatLng(plan.from!.latitude!, plan.from!.longitude!),
+                    zoom: 18,
+                  );
                 },
-                icon: Icon(Icons.close),
-                isCompact: true,
+              ),
+              SizedBox(height: 10),
+              ...itinerary.legs.map((leg) {
+                return leg.transitLeg
+                    ? TransitDetailsIcon(
+                        leg: leg,
+                        moveTo: (p0) {
+                          updateCamera(target: p0, zoom: 18);
+                        },
+                      )
+                    : WalkDetailsIcon(
+                        leg: leg,
+                        moveTo: (p0) {
+                          updateCamera(target: p0, zoom: 18);
+                        },
+                      );
+              }),
+              SizedBox(height: 10),
+              ItineraryLocationTile(
+                text: plan.to?.name ?? '',
+                icon: SizedBox(
+                  width: 24,
+                  height: 30,
+                  child: FittedBox(
+                    fit: BoxFit.none,
+                    child: SizedBox(width: 30, height: 30, child: ToMarker()),
+                  ),
+                ),
+                moveTo: () {
+                  updateCamera(
+                    target: LatLng(plan.to!.latitude!, plan.to!.longitude!),
+                    zoom: 18,
+                  );
+                },
               ),
             ],
           ),
-          SizedBox(height: 24),
-          ItineraryLocationTile(
-            text: plan.from?.name ?? '',
-            icon: FromMarker(),
-            moveTo: () {
-             updateCamera(
-                target: LatLng(plan.from!.latitude!, plan.from!.longitude!),
-                zoom: 18,
-              );
-            },
-          ),
-          SizedBox(height: 10),
-          ...itinerary.legs.map((leg) {
-            return leg.transitLeg
-                ? TransitDetailsIcon(
-                    leg: leg,
-                    moveTo: (p0) {
-                      updateCamera(
-                        target: p0,
-                        zoom: 18,
-                      );
-                    },
-                  )
-                : WalkDetailsIcon(
-                    leg: leg,
-                    moveTo: (p0) {
-                      updateCamera(
-                        target: p0,
-                        zoom: 18,
-                      );
-                    },
-                  );
-          }),
-          SizedBox(height: 10),
-          ItineraryLocationTile(
-            text: plan.to?.name ?? '',
-            icon: SizedBox(
-              width: 24,
-              height: 30,
-              child: FittedBox(
-                fit: BoxFit.none,
-                child: SizedBox(width: 30, height: 30, child: ToMarker()),
-              ),
-            ),
-            moveTo: () {
-              updateCamera(
-                target: LatLng(plan.to!.latitude!, plan.to!.longitude!),
-                zoom: 18,
-              );
-            },
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

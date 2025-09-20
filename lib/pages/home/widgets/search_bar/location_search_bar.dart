@@ -310,7 +310,7 @@ class RouteSearchComponent extends StatelessWidget {
     final theme = Theme.of(context);
 
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 12),
+      margin: const EdgeInsets.only(left: 50, right: 12),
       padding: const EdgeInsets.fromLTRB(14, 0, 0, 0),
       decoration: BoxDecoration(
         color: theme.colorScheme.surface,
@@ -324,99 +324,112 @@ class RouteSearchComponent extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: theme.colorScheme.outlineVariant),
       ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Stack(
-            clipBehavior: Clip.none,
-            alignment: Alignment.centerLeft,
-            children: [
-              Divider(
-                height: 2,
-                indent: 28,
-                endIndent: 40,
-                color: theme.colorScheme.outlineVariant,
-              ),
-              Positioned(
-                child: SearchBarUtils.getDots(
-                  theme.colorScheme.onSurfaceVariant,
-                ),
-              ),
-              Row(
-                children: [
-                  Expanded(
-                    child: Column(
+          // IconButton(
+          //   onPressed: () {},
+          //   icon: const Icon(Icons.menu),
+          // ),
+          Expanded(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Stack(
+                  clipBehavior: Clip.none,
+                  alignment: Alignment.centerLeft,
+                  children: [
+                    Divider(
+                      height: 2,
+                      indent: 28,
+                      endIndent: 40,
+                      color: theme.colorScheme.outlineVariant,
+                    ),
+                    Positioned(
+                      child: SearchBarUtils.getDots(
+                        theme.colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                    Row(
                       children: [
-                        _TextFieldUI(
-                          onTap: () async {
-                            final locationSelected =
-                                await FullScreenSearchModal.onLocationSelected(
-                                  context,
-                                  location: origin,
-                                );
-                            if (locationSelected != null) {
-                              onSaveFrom(locationSelected);
-                            }
-                          },
-                          location: origin,
-                          hintText: 'Choose start location',
-                          icon: Container(
-                            width: 24,
-                            padding: const EdgeInsets.all(3.5),
-                            child: const FromMarker(),
+                        Expanded(
+                          child: Column(
+                            children: [
+                              _TextFieldUI(
+                                onTap: () async {
+                                  final locationSelected =
+                                      await FullScreenSearchModal.onLocationSelected(
+                                        context,
+                                        location: origin,
+                                      );
+                                  if (locationSelected != null) {
+                                    onSaveFrom(locationSelected);
+                                  }
+                                },
+                                location: origin,
+                                hintText: 'Choose start location',
+                                icon: Container(
+                                  width: 24,
+                                  padding: const EdgeInsets.all(3.5),
+                                  child: const FromMarker(),
+                                ),
+                              ),
+                              _TextFieldUI(
+                                onTap: () async {
+                                  final locationSelected =
+                                      await FullScreenSearchModal.onLocationSelected(
+                                        context,
+                                        location: destination,
+                                      );
+                                  if (locationSelected != null) {
+                                    onSaveTo(locationSelected);
+                                  }
+                                },
+                                location: destination,
+                                hintText: 'Choose destination location',
+                                icon: Container(
+                                  width: 24,
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 8,
+                                  ),
+                                  child: const ToMarker(),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                        _TextFieldUI(
-                          onTap: () async {
-                            final locationSelected =
-                                await FullScreenSearchModal.onLocationSelected(
-                                  context,
-                                  location: destination,
-                                );
-                            if (locationSelected != null) {
-                              onSaveTo(locationSelected);
-                            }
-                          },
-                          location: destination,
-                          hintText: 'Choose destination location',
-                          icon: Container(
-                            width: 24,
-                            padding: const EdgeInsets.symmetric(vertical: 8),
-                            child: const ToMarker(),
-                          ),
+                        Column(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 2),
+                              child: IconButton(
+                                icon: const Icon(Icons.more_vert),
+                                color: theme.colorScheme.onSurface,
+                                visualDensity: VisualDensity.compact,
+                                padding: EdgeInsets.zero,
+                                onPressed: onClearTo,
+                                tooltip: 'Menú',
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 2),
+                              child: IconButton(
+                                icon: const Icon(Icons.swap_vert),
+                                color: theme.colorScheme.onSurface,
+                                visualDensity: VisualDensity.compact,
+                                padding: EdgeInsets.zero,
+                                onPressed: onSwap,
+                                tooltip: 'Swap',
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
-                  ),
-                  Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 2),
-                        child: IconButton(
-                          icon: const Icon(Icons.more_vert),
-                          color: theme.colorScheme.onSurface,
-                          visualDensity: VisualDensity.compact,
-                          padding: EdgeInsets.zero,
-                          onPressed: onClearTo,
-                          tooltip: 'Menú',
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 2),
-                        child: IconButton(
-                          icon: const Icon(Icons.swap_vert),
-                          color: theme.colorScheme.onSurface,
-                          visualDensity: VisualDensity.compact,
-                          padding: EdgeInsets.zero,
-                          onPressed: onSwap,
-                          tooltip: 'Swap',
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ],
+                  ],
+                ),
+              ],
+            ),
           ),
         ],
       ),
