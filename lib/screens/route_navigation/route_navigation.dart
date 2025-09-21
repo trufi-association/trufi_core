@@ -209,6 +209,14 @@ class _RouteNavigationScreenState extends State<RouteNavigationScreen> {
                             return RouteSearchComponent(
                               onSaveFrom: (location) async {
                                 await routingMapComponent.addOrigin(location);
+                                if (destination == null && currentLocation != null) {
+                                  await routingMapComponent.addDestination(
+                                    TrufiLocation(
+                                      description: 'Your Location',
+                                      position: currentLocation,
+                                    ),
+                                  );
+                                }
                                 await _fetchPlanWithLoading();
                               },
                               onClearFrom: () {},
@@ -254,7 +262,15 @@ class _RouteNavigationScreenState extends State<RouteNavigationScreen> {
                                       position: currentLocation,
                                     )
                                   : origin,
-                              destination: destination,
+                              destination:
+                                  origin != null &&
+                                      destination == null &&
+                                      currentLocation != null
+                                  ? TrufiLocation(
+                                      description: 'Your Location',
+                                      position: currentLocation,
+                                    )
+                                  : destination,
                             );
                           },
                         ),
