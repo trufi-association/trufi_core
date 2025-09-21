@@ -82,13 +82,15 @@ class ItineraryDetailsCard extends StatelessWidget {
                   SizedBox(width: 4),
                   Expanded(child: ItineraryPath(itinerary: itinerary)),
                   SizedBox(width: 4),
-
-                  OutlinedButton(
-                    onPressed: () async {
-                      TicketSelector.show(context);
-                    },
-                    child: Text("Buy Ticket"),
-                  ),
+                  if (!itinerary.legs.every(
+                    (l) => l.transportMode == TransportMode.walk,
+                  ))
+                    OutlinedButton(
+                      onPressed: () async {
+                        TicketSelector.show(context);
+                      },
+                      child: Text("Buy Ticket"),
+                    ),
                 ],
               ),
               SizedBox(height: 24),

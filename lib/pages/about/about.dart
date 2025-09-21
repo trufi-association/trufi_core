@@ -120,7 +120,7 @@ class AboutPage extends StatelessWidget {
                       children: [
                         Text(
                           localization.translateWithParams(
-                            '${LocalizationKey.aboutUsLicenses}: ${snapshot.data ?? ''}',
+                            '${LocalizationKey.aboutUsVersion.key}: ${snapshot.data ?? ''}',
                           ),
                           style: theme.textTheme.bodyLarge,
                         ),

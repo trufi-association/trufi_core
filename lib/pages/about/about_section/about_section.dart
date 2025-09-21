@@ -4,7 +4,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import 'image_base64.dart';
+import 'image_base64.dart'; // Si no usarás la imagen, puedes remover esta import.
 
 class AboutSection extends StatelessWidget {
   static const _padding = EdgeInsets.only(top: 16.0);
@@ -13,85 +13,68 @@ class AboutSection extends StatelessWidget {
     super.key,
     required this.appName,
     required this.cityName,
+    this.showLogo = false, // por si quieres mostrar/ocultar la imagen
   });
 
   final String appName;
   final String cityName;
+  final bool showLogo;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final isLanguageEn = Localizations.localeOf(context).languageCode == 'en';
+    final body = theme.textTheme.bodyLarge;
+
+    TextStyle linkStyle() => body?.copyWith(
+          decoration: TextDecoration.underline,
+          color: theme.colorScheme.primary,
+        ) ??
+        const TextStyle(decoration: TextDecoration.underline);
+
+    Future<void> _open(String url) async {
+      final uri = Uri.parse(url);
+      if (await canLaunchUrl(uri)) {
+        await launchUrl(uri, mode: LaunchMode.externalApplication);
+      }
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          isLanguageEn ? 'About this service' : 'Über diesen Dienst',
+          'About this service',
           style: theme.textTheme.titleMedium?.copyWith(
             color: theme.textTheme.bodyLarge?.color,
             fontWeight: FontWeight.w700,
           ),
         ),
+
+        // Descripción neutral
         Padding(
           padding: _padding,
           child: Text(
-            isLanguageEn
-                ? '$appName is a travel planning application for the city of $cityName and its surroundings. This service includes public transport, footpaths, cycling, street and parking information, charging infrastructure and sharing offerings. The mobility offerings are connected through intermodal routing.'
-                : '$appName ist eine Reiseplanungs-Anwendung für die Stadt $cityName und Umgebung. Dieser Dienst umfasst ÖPNV, Fußwege, Radverkehr, Straßen- und Parkplatzinformationen, Ladeinfrastruktur und Sharing-Angebote. Mobilitätsangebote werden durch intermodales Routing miteinander vernetzt.',
-            style: theme.textTheme.bodyLarge,
+            '$appName is an experimental travel planning application for $cityName and nearby areas. '
+            'The service may include public transport and walking options, as well as general mobility information. '
+            'Coverage and data quality can vary and may be incomplete.',
+            style: body,
           ),
         ),
+
+        // (Opcional) Logo/imagen si quieres mantenerlo para “about”
+        if (showLogo) ...[
+          const SizedBox(height: 16),
+          SizedBox(
+            width: 250,
+            child: Image.memory(base64Decode(imageAboutSection)),
+          ),
+        ],
+
+
+        // Fuentes de datos (neutral, evita comprometer a terceros)
         Padding(
           padding: _padding,
           child: Text(
-            isLanguageEn ? 'Contribute:' : 'Mitmachen:',
-            style: theme.textTheme.bodyLarge,
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.only(top: 5.0),
-          child: Text(
-            isLanguageEn
-                ? 'The city of $cityName has developed this app, funded by the Federal Ministry of Transport and Digital Infrastructure (BMVI), as model city. The $appName app is an open source solution and can be used, customized and further developed by other municipalities to meet individual needs (white lable solution). Participation is welcome!'
-                : 'Die Stadt $cityName hat diese App im Rahmen der Modellstadt, gefördert durch das Bundesministerium für Verkehr und digitale Infrastruktur (BMVI) entwickelt. $appName ist eine Open Source Lösung und kann von anderen Kommunen und Akteuren unter ihrem Namen und Erscheinungsbild verwendet und an individuelle Bedürfnisse angepasst und weiterentwickelt werden (White Label Lösung). Mitmachen ist gewünscht!',
-            style: theme.textTheme.bodyLarge,
-          ),
-        ),
-        Padding(
-          padding: _padding,
-          child: Text(
-            isLanguageEn ? 'Funded by' : 'Gefördert durch',
-            style: theme.textTheme.bodyLarge,
-          ),
-        ),
-        const SizedBox(height: 16),
-        SizedBox(
-          width: 250,
-          child: Image.memory(base64Decode(imageAboutSection)),
-        ),
-        Padding(
-          padding: _padding,
-          child: Text(
-            isLanguageEn ? 'Digitransit platform' : 'Digitransit Plattform',
-            style: theme.textTheme.titleMedium?.copyWith(
-              color: theme.textTheme.bodyLarge?.color,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-        ),
-        Padding(
-          padding: _padding,
-          child: Text(
-            isLanguageEn
-                ? 'This service is based on the Digitransit Platform and the backend service OpenTripPlanner. All software is available under an open license. Thanks to everyone involved.'
-                : 'Dieser Dienst basiert auf der Digitransit Platform und dem Backend-Dienst OpenTripPlanner. Alle Software ist unter einer offenen Lizenzen verfügbar. Vielen Dank an alle Beteiligten.',
-            style: theme.textTheme.bodyLarge,
-          ),
-        ),
-        Padding(
-          padding: _padding,
-          child: Text(
-            isLanguageEn ? 'Data sources' : 'Datenquellen',
+            'Data sources',
             style: theme.textTheme.titleMedium?.copyWith(
               color: theme.textTheme.bodyLarge?.color,
               fontWeight: FontWeight.w700,
@@ -102,27 +85,32 @@ class AboutSection extends StatelessWidget {
           padding: _padding,
           child: RichText(
             text: TextSpan(
-              text: isLanguageEn ? 'Card data ' : 'Kartendaten: © ',
-              style: theme.textTheme.bodyLarge,
-              children: <TextSpan>[
+              style: body,
+              children: [
+                const TextSpan(text: 'Base map and POI data: '),
                 TextSpan(
-                  text: isLanguageEn
-                      ? 'OpenStreetMap Contributors'
-                      : 'OpenStreetMap Mitwirkende',
-                  style: TextStyle(
-                    decoration: TextDecoration.underline,
-                    color: theme.primaryColor,
-                  ),
+                  text: '© OpenStreetMap contributors',
+                  style: linkStyle(),
                   recognizer: TapGestureRecognizer()
-                    ..onTap = () async {
-                      const url =
-                          'https://www.openstreetmap.org/#map=7/48.59523/8.86648';
-                      if (await canLaunch(url)) {
-                        await launch(url);
-                      }
-                    },
+                    ..onTap = () => _open('https://www.openstreetmap.org/copyright'),
+                ),
+                const TextSpan(
+                  text:
+                      '. Public transport datasets may originate from local operators or public open-data portals where available.',
                 ),
               ],
+            ),
+          ),
+        ),
+
+        // Licencias & créditos (sin listar licencias específicas para no equivocarnos)
+        Padding(
+          padding: _padding,
+          child: Text(
+            'Licenses & credits',
+            style: theme.textTheme.titleMedium?.copyWith(
+              color: theme.textTheme.bodyLarge?.color,
+              fontWeight: FontWeight.w700,
             ),
           ),
         ),
@@ -130,63 +118,32 @@ class AboutSection extends StatelessWidget {
           padding: _padding,
           child: RichText(
             text: TextSpan(
-              text: isLanguageEn
-                  ? 'ÖPNV-data: Datasets from '
-                  : 'ÖPNV-Daten: Datensätze der ',
-              style: theme.textTheme.bodyLarge,
-              children: <TextSpan>[
+              style: body,
+              children: [
+                 TextSpan(
+                  text:
+                      '$appName uses open-source software and data. Please review the license files and notices in the application and linked project pages. ',
+                ),
                 TextSpan(
-                  text: 'NVBW GmbH',
-                  style: TextStyle(
-                    decoration: TextDecoration.underline,
-                    color: theme.primaryColor,
-                  ),
+                  text: 'Open-source notices',
+                  style: linkStyle(),
                   recognizer: TapGestureRecognizer()
-                    ..onTap = () async {
-                      const url = 'https://www.nvbw.de/open-data';
-                      if (await canLaunch(url)) {
-                        await launch(url);
-                      }
-                    },
-                ),
-                TextSpan(
-                  text: isLanguageEn ? ' and ' : ' und der ',
-                  style: theme.textTheme.bodyLarge,
-                ),
-                TextSpan(
-                  text: 'VVS GmbH',
-                  style: TextStyle(
-                    decoration: TextDecoration.underline,
-                    color: theme.primaryColor,
-                  ),
-                  recognizer: TapGestureRecognizer()
-                    ..onTap = () async {
-                      const url = 'https://www.openvvs.de/dataset/gtfs-daten';
-                      if (await canLaunch(url)) {
-                        await launch(url);
-                      }
-                    },
-                ),
-                TextSpan(
-                  text: isLanguageEn
-                      ? ', shapes (i.e. geometries of the routes) each enriched with OpenStreetMap data © OpenStreetMap Contributors'
-                      : ', Shapes (d.h. Geometrien der Streckenverläufe) jeweils angereichert mit OpenStreetMap-Daten © OpenStreetMap Mitwirkende',
-                  style: theme.textTheme.bodyLarge,
+                    ..onTap = () => _open('https://opensource.org/licenses'),
                 ),
               ],
             ),
           ),
         ),
+
+        // Disclaimer fuerte
         Padding(
           padding: _padding,
           child: Text(
-            isLanguageEn
-                ? 'All statements without guarantee.'
-                : 'Alle Angaben ohne Gewähr.',
-            style: theme.textTheme.bodyLarge,
+            'All information is provided without guarantee. Availability, accuracy and timeliness of routes, schedules and other data may vary.',
+            style: body,
           ),
         ),
       ],
     );
-  }
+  } 
 }

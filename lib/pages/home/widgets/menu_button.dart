@@ -11,14 +11,17 @@ class MenuButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return SafeArea(
       child: IconButton(
         onPressed: () {
           _showMenuOptions(context);
         },
         icon: const Icon(Icons.menu),
-        style: const ButtonStyle(
-          backgroundColor: WidgetStatePropertyAll(Colors.white),
+        style:  ButtonStyle(
+          backgroundColor: WidgetStatePropertyAll(
+            theme.colorScheme.surface,
+          ),
           elevation: WidgetStatePropertyAll(2.0),
           shadowColor: WidgetStatePropertyAll(Colors.black87),
         ),
@@ -27,8 +30,8 @@ class MenuButton extends StatelessWidget {
   }
 
   void _showMenuOptions(BuildContext context) {
-    final localization = AppLocalization.of(context);
     final theme = Theme.of(context);
+    final localization = AppLocalization.of(context);
 
     showModalBottomSheet(
       context: context,
