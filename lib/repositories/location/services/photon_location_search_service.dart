@@ -28,7 +28,7 @@ class PhotonLocationSearchService implements ILocationSearchService {
     final Uri request = Uri.parse("$photonUrl/api").replace(
       queryParameters: {
         "q": query,
-        // "bbox": "-66.453088,-17.762296,-65.758056,-17.238372",
+        "bbox": [29.954,-1.997,30.167,-1.845].join(','),
         ...extraQueryParameters,
       },
     );
@@ -63,7 +63,7 @@ class PhotonLocationSearchService implements ILocationSearchService {
         final properties = feature["properties"];
         return LocationSearchResponse(
           name: properties["name"],
-          street: properties["street"] ?? "",
+          street: properties["street"],
           latLng: location,
         ).toTrufiLocation();
       }

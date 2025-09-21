@@ -1,3 +1,5 @@
+import 'package:latlong2/latlong.dart';
+
 class ApiConfig {
   ApiConfig._privateConstructor();
 
@@ -10,8 +12,9 @@ class ApiConfig {
   String baseDomain = "otp.kigali.trufi.dev"; // For dev
   // String baseDomain = "api.stadtnavi.de"; // For PROD
 
-  String get openTripPlannerUrl => "https://api.dev.stadtnavi.eu/otp/gtfs/v1";
+  String get openTripPlannerUrl => "https://$baseDomain/otp/transmodel/v3";
   String get faresURL => "https://$baseDomain/fares";
+  LatLng get originMap => LatLng(-1.96617, 30.06409);
   
   String get carpoolOffers =>
       "https://dev.stadtnavi.eu/carpool-offers"; // For dev

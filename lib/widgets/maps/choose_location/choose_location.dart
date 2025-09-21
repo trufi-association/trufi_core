@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:async/async.dart' as async;
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:trufi_core/consts.dart';
 import 'package:trufi_core/pages/home/widgets/routing_map/routing_map_controller.dart';
 
 import 'package:trufi_core/repositories/location/location_repository.dart';
@@ -47,16 +48,9 @@ class _ChooseLocationPageState extends State<ChooseLocationPage>
     with TickerProviderStateMixin {
   // --- External dependencies ---
   final locationRepository = LocationRepository();
-  final mapController = TrufiMapController(
-    initialCameraPosition: TrufiCameraPosition(
-      target: LatLng(48.5950, 8.8672),
-      zoom: 17,
-      bearing: 0,
-    ),
-  );
+  late final TrufiMapController mapController;
 
   // --- Map and routing ---
-  late final RoutingMapComponent routingMapComponent;
   async.CancelableOperation<TrufiLocation>? cancelableOperation;
   LatLng? position;
 
@@ -69,11 +63,16 @@ class _ChooseLocationPageState extends State<ChooseLocationPage>
   @override
   void initState() {
     super.initState();
-    routingMapComponent = RoutingMapComponent(mapController);
-
+    mapController = TrufiMapController(
+      initialCameraPosition: TrufiCameraPosition(
+        target: widget.position ?? ApiConfig().originMap,
+        zoom: 15,
+        bearing: 0,
+      ),
+    );
     WidgetsBinding.instance.addPostFrameCallback((duration) {
       // TODO replace static position with center city
-      _loadData(widget.position ?? LatLng(48.5950, 8.8672));
+      _loadData(widget.position ?? ApiConfig().originMap);
       mapController.cameraPositionNotifier.addListener(
         _onCameraChangedDebounced,
       );
@@ -173,13 +172,18 @@ class _ChooseLocationPageState extends State<ChooseLocationPage>
                       }
                     },
                     child: Padding(
-                      padding: EdgeInsets.symmetric(vertical: widget.hideLocationDetails?12:8),
+                      padding: EdgeInsets.symmetric(
+                        vertical: widget.hideLocationDetails ? 12 : 8,
+                      ),
                       child: Text(
                         (locationData != null || widget.hideLocationDetails)
                             ? 'Ok'
                             : 'Choose Now',
                         textAlign: TextAlign.center,
-                        style: TextStyle(color: theme.colorScheme.secondary, fontWeight: FontWeight.w500),
+                        style: TextStyle(
+                          color: theme.colorScheme.secondary,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
                     ),
                   ),

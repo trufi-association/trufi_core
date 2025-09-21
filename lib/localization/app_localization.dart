@@ -9,6 +9,19 @@ enum LocalizationKey {
   defaultLocationHome,
   defaultLocationWork,
   defaultLocationAdd,
+  defaultLocationSetLocation,
+  // Your Places page
+  yourPlacesMenu,
+
+  // Feedback page
+  feedbackMenu,
+  feedbackTitle,
+  feedbackContent,
+  // About Us page
+  aboutUsMenu,
+  aboutUsVersion,
+  aboutUsLicenses,
+  aboutUsOpenSource,
 }
 
 extension LocalizationKeyExtension on LocalizationKey {
@@ -19,6 +32,18 @@ extension LocalizationKeyExtension on LocalizationKey {
     'default_location_home': LocalizationKey.defaultLocationHome,
     'default_location_work': LocalizationKey.defaultLocationWork,
     'default_location_add': LocalizationKey.defaultLocationAdd,
+    'default_location_setLocation': LocalizationKey.defaultLocationSetLocation,
+    // Your Places page
+    'yourPlaces.menu': LocalizationKey.yourPlacesMenu,
+    // Feedback page
+    'feedback.menu': LocalizationKey.feedbackMenu,
+    'feedback.title': LocalizationKey.feedbackTitle,
+    'feedback.content': LocalizationKey.feedbackContent,
+    // About Us page
+    'aboutUs.menu': LocalizationKey.aboutUsMenu,
+    'aboutUs.version': LocalizationKey.aboutUsVersion,
+    'aboutUs.licenses': LocalizationKey.aboutUsLicenses,
+    'aboutUs.openSource': LocalizationKey.aboutUsOpenSource,
   };
 
   String get key =>
@@ -54,7 +79,21 @@ class AppLocalization {
         'selected_on_map': 'Selected on the map',
         'default_location_home': 'Home',
         'default_location_work': 'Work',
-        'default_location_add': 'Set \$1 address',
+        'default_location_add': 'Set \$1 location',
+        'default_location_setLocation': 'Set location',
+        // Your Places page
+        'yourPlaces.menu': 'Your Places',
+        // Feedback page
+        'feedback.menu': 'Send Feedback',
+        'feedback.title': 'Please e-mail us',
+        'feedback.content':
+            'Do you have suggestions for our app or found some errors in the data? We would love to hear from you! Please make sure to add your email address or telephone, so we can respond to you.',
+        // About Us page
+        'aboutUs.menu': 'About this service',
+        'aboutUs.version': 'Version \$1',
+        'aboutUs.licenses': 'Licenses',
+        'aboutUs.openSource':
+            'This app is released as open source on GitHub. Feel free to contribute to the code, or bring an app to your own city.',
       };
       _localizedValues = content.map((key, value) {
         final valueString = value.toString().trim();

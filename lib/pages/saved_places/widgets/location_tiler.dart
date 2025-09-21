@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:trufi_core/localization/app_localization.dart';
 
 import 'package:trufi_core/pages/saved_places/widgets/dialog_edit_location.dart';
 import 'package:trufi_core/screens/route_navigation/maps/trufi_map_controller.dart';
@@ -44,6 +45,7 @@ class LocationTiler extends StatefulWidget {
 class _LocationTilerState extends State<LocationTiler> {
   @override
   Widget build(BuildContext context) {
+    final localization = AppLocalization.of(context);
     return GestureDetector(
       onTap: () {
         if (!widget.location.isLatLngDefined) {
@@ -57,7 +59,7 @@ class _LocationTilerState extends State<LocationTiler> {
               margin: const EdgeInsets.symmetric(horizontal: 10),
               child: typeToIconData(widget.location.type),
             ),
-            Expanded(child: Text(widget.location.description, maxLines: 1)),
+            Expanded(child: Text(widget.location.displayName(localization), maxLines: 1)),
             if (widget.location.isLatLngDefined)
               PopupMenuButton<int>(
                 itemBuilder: (BuildContext context) => [

@@ -2,13 +2,18 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart' as latlng;
+import 'package:latlong2/latlong.dart';
+import 'package:trufi_core/consts.dart';
+import 'package:trufi_core/pages/home/widgets/menu_button.dart';
 import 'package:trufi_core/pages/home/widgets/routing_map/routing_map_controller.dart';
 import 'package:trufi_core/pages/home/widgets/search_bar/location_search_bar.dart';
 import 'package:trufi_core/pages/home/widgets/travel_bottom_sheet/travel_bottom_sheet.dart';
+import 'package:trufi_core/repositories/services/gps_lcoation/gps_location.dart';
 import 'package:trufi_core/screens/route_navigation/map_layers/fit_camera_layer.dart';
 import 'package:trufi_core/screens/route_navigation/maps/flutter_map.dart';
 import 'package:trufi_core/screens/route_navigation/maps/trufi_map_controller.dart';
 import 'package:trufi_core/screens/route_navigation/maps/maplibre_gl.dart';
+import 'package:trufi_core/widgets/app_lifecycle_reactor.dart';
 import 'package:trufi_core/widgets/bottom_sheet/trufi_bottom_sheet.dart';
 
 class RouteNavigationScreen extends StatefulWidget {
@@ -71,7 +76,12 @@ class RouteNavigationScreen extends StatefulWidget {
   static IFitCameraLayer defaultFitCameraLayer(TrufiMapController controller) {
     return FitCameraLayer(
       controller,
-      padding: const EdgeInsets.only(bottom: 200, right: 30, left: 30, top: 100),
+      padding: const EdgeInsets.only(
+        bottom: 200,
+        right: 30,
+        left: 30,
+        top: 100,
+      ),
       // debugFlag: true,
     );
   }
@@ -85,8 +95,8 @@ class _RouteNavigationScreenState extends State<RouteNavigationScreen> {
 
   final mapController = TrufiMapController(
     initialCameraPosition: TrufiCameraPosition(
-      target: latlng.LatLng(48.5950, 8.8672),
-      zoom: 17,
+      target: ApiConfig().originMap,
+      zoom: 12,
       bearing: 0,
     ),
   );
@@ -168,147 +178,171 @@ class _RouteNavigationScreenState extends State<RouteNavigationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: LayoutBuilder(
-        builder: (context, constraints) {
-          final logicalSize = Size(constraints.maxWidth, constraints.maxHeight);
-          final viewPadding = MediaQuery.of(context).viewPadding;
-          fitCameraLayer.updateViewport(logicalSize, viewPadding);
-          return Stack(
-            children: [
-              mapRenders[showMapIndex],
-              ValueListenableBuilder(
-                valueListenable: mapController.layersNotifier,
-                builder: (context, value, child) {
-                  final selectedItinerary =
-                      routingMapComponent.selectedItinerary;
-                  final plan = routingMapComponent.plan;
-                  final origin = routingMapComponent.origin;
-                  final destination = routingMapComponent.destination;
-                  return Stack(
-                    children: [
-                      SafeArea(
-                        child: IconButton(
-                          onPressed: () {},
-                          icon: const Icon(Icons.menu),
-                          style: const ButtonStyle(
-                            backgroundColor: WidgetStatePropertyAll(
-                              Colors.white,
-                            ),
-                          ),
-                        ),
-                      ),
-                      LocationSearchBar(
-                        onSaveFrom: (location) async {
-                          await routingMapComponent.addOrigin(location);
-                          await _fetchPlanWithLoading();
-                        },
-                        onClearFrom: () {},
-                        onSaveTo: (location) async {
-                          await routingMapComponent.addDestination(location);
-                          await _fetchPlanWithLoading();
-                        },
-                        onClearTo: () async {
-                          routingMapComponent.cleanOriginAndDestination();
-                          await _fetchPlanWithLoading();
-                        },
-                        onFetchPlan: () {},
-                        onReset: () {},
-                        onSwap: () async {
-                          if (routingMapComponent.destination != null &&
-                              routingMapComponent.origin != null) {
-                            final temp = routingMapComponent.origin;
-                            await routingMapComponent.addOrigin(
-                              routingMapComponent.destination!,
-                            );
-                            await routingMapComponent.addDestination(temp!);
-                            await _fetchPlanWithLoading();
-                          }
-                        },
-                        origin: origin,
-                        destination: destination,
-                      ),
-                      if (plan != null)
-                        TrufiBottomSheet(
-                          onHeightChanged: (height) {
-                            final currentHeight = constraints.maxHeight / 2;
-                            fitCameraLayer.updatePadding(
-                              EdgeInsets.only(
-                                bottom: math.min(currentHeight, height),
-                                right: 30,
-                                left: 30,
-                                top: 100,
-                              ),
+      body: AppLifecycleReactor(
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final logicalSize = Size(
+              constraints.maxWidth,
+              constraints.maxHeight,
+            );
+            final viewPadding = MediaQuery.of(context).viewPadding;
+            fitCameraLayer.updateViewport(logicalSize, viewPadding);
+            return Stack(
+              children: [
+                mapRenders[showMapIndex],
+                ValueListenableBuilder(
+                  valueListenable: mapController.layersNotifier,
+                  builder: (context, value, child) {
+                    final selectedItinerary =
+                        routingMapComponent.selectedItinerary;
+                    final plan = routingMapComponent.plan;
+                    final origin = routingMapComponent.origin;
+                    final destination = routingMapComponent.destination;
+                    return Stack(
+                      children: [
+                        MenuButton(),
+                        StreamBuilder<LatLng?>(
+                          initialData: null,
+                          stream: GPSLocationProvider().stream,
+                          builder: (context, snapshot) {
+                            final currentLocation = snapshot.data;
+                            return RouteSearchComponent(
+                              onSaveFrom: (location) async {
+                                await routingMapComponent.addOrigin(location);
+                                await _fetchPlanWithLoading();
+                              },
+                              onClearFrom: () {},
+                              onSaveTo: (location) async {
+                                await routingMapComponent.addDestination(
+                                  location,
+                                );
+                                if (origin == null && currentLocation != null) {
+                                  await routingMapComponent.addOrigin(
+                                    TrufiLocation(
+                                      description: 'Your Location',
+                                      position: currentLocation,
+                                    ),
+                                  );
+                                }
+                                await _fetchPlanWithLoading();
+                              },
+                              onClearTo: () async {
+                                routingMapComponent.cleanOriginAndDestination();
+                                await _fetchPlanWithLoading();
+                              },
+                              onFetchPlan: () {},
+                              onReset: () {},
+                              onSwap: () async {
+                                if (routingMapComponent.destination != null &&
+                                    routingMapComponent.origin != null) {
+                                  final temp = routingMapComponent.origin;
+                                  await routingMapComponent.addOrigin(
+                                    routingMapComponent.destination!,
+                                  );
+                                  await routingMapComponent.addDestination(
+                                    temp!,
+                                  );
+                                  await _fetchPlanWithLoading();
+                                }
+                              },
+                              origin:
+                                  destination != null &&
+                                      origin == null &&
+                                      currentLocation != null
+                                  ? TrufiLocation(
+                                      description: 'Your Location',
+                                      position: currentLocation,
+                                    )
+                                  : origin,
+                              destination: destination,
                             );
                           },
-                          child: TransitBottomSheet(
-                            plan: plan!,
-                            selectedItinerary: selectedItinerary,
-                            updateCamera:
-                                ({bearing, target, visibleRegion, zoom}) {
-                                  return routingMapComponent.controller
-                                      .updateCamera(target: target, zoom: 18);
-                                },
-                            onClose: () {
-                              routingMapComponent.cleanOriginAndDestination();
-                            },
-                            onSelectItinerary: (itinerary) {
-                              if (itinerary != null) {
-                                routingMapComponent.changeItinerary(itinerary);
-                                final points = itinerary.legs
-                                    .expand((leg) => leg.accumulatedPoints)
-                                    .toList();
-                                fitCameraLayer.fitBoundsOnCamera(points);
-                              } else {
-                                routingMapComponent.changeItinerary(null);
-                                fitCameraLayer.fitBoundsOnCamera([]);
-                              }
-                            },
-                          ),
-                        )
-                      else if (selectedMarker?.buildPanel != null)
-                        TrufiBottomSheet(
-                          child: selectedMarker!.buildPanel!(context),
                         ),
-                      SafeArea(
-                        child: Padding(
-                          padding: const EdgeInsets.only(top: 100, right: 8),
-                          child: Align(
-                            alignment: Alignment.topRight,
-                            child: ValueListenableBuilder<bool>(
-                              valueListenable:
-                                  fitCameraLayer.outOfFocusNotifier,
-                              builder: (context, outOfFocus, _) {
-                                if (!outOfFocus) {
-                                  return const SizedBox.shrink();
-                                }
-                                return Tooltip(
-                                  message: 'Fuera de foco: re-centrar',
-                                  child: IconButton(
-                                    iconSize: 28,
-                                    icon: const Icon(
-                                      Icons.crop_free,
-                                      color: Colors.redAccent,
-                                    ),
-                                    style: const ButtonStyle(
-                                      backgroundColor: WidgetStatePropertyAll(
-                                        Colors.white,
-                                      ),
-                                    ),
-                                    onPressed: fitCameraLayer.reFitCamera,
-                                  ),
-                                );
+                        if (plan != null)
+                          TrufiBottomSheet(
+                            onHeightChanged: (height) {
+                              final currentHeight = constraints.maxHeight / 2;
+                              fitCameraLayer.updatePadding(
+                                EdgeInsets.only(
+                                  bottom: math.min(currentHeight, height),
+                                  right: 30,
+                                  left: 30,
+                                  top: 100,
+                                ),
+                              );
+                            },
+                            child: TransitBottomSheet(
+                              plan: plan!,
+                              selectedItinerary: selectedItinerary,
+                              updateCamera:
+                                  ({bearing, target, visibleRegion, zoom}) {
+                                    return routingMapComponent.controller
+                                        .updateCamera(target: target, zoom: 18);
+                                  },
+                              onClose: () {
+                                routingMapComponent.cleanOriginAndDestination();
                               },
+                              onSelectItinerary: (itinerary) {
+                                if (itinerary != null) {
+                                  routingMapComponent.changeItinerary(
+                                    itinerary,
+                                  );
+                                  final points = itinerary.legs
+                                      .expand((leg) => leg.accumulatedPoints)
+                                      .toList();
+                                  fitCameraLayer.fitBoundsOnCamera(points);
+                                } else {
+                                  routingMapComponent.changeItinerary(null);
+                                  fitCameraLayer.fitBoundsOnCamera([]);
+                                }
+                              },
+                            ),
+                          )
+                        else if (selectedMarker?.buildPanel != null)
+                          TrufiBottomSheet(
+                            child: selectedMarker!.buildPanel!(context),
+                          ),
+                        SafeArea(
+                          child: Padding(
+                            padding: const EdgeInsets.only(top: 100, right: 8),
+                            child: Align(
+                              alignment: Alignment.topRight,
+                              child: ValueListenableBuilder<bool>(
+                                valueListenable:
+                                    fitCameraLayer.outOfFocusNotifier,
+                                builder: (context, outOfFocus, _) {
+                                  if (!outOfFocus) {
+                                    return const SizedBox.shrink();
+                                  }
+                                  return Tooltip(
+                                    message: 'Fuera de foco: re-centrar',
+                                    child: IconButton(
+                                      iconSize: 28,
+                                      icon: const Icon(
+                                        Icons.crop_free,
+                                        color: Colors.redAccent,
+                                      ),
+                                      style: const ButtonStyle(
+                                        backgroundColor: WidgetStatePropertyAll(
+                                          Colors.white,
+                                        ),
+                                      ),
+                                      onPressed: fitCameraLayer.reFitCamera,
+                                    ),
+                                  );
+                                },
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    ],
-                  );
-                },
-              ),
-            ],
-          );
-        },
+                      ],
+                    );
+                  },
+                ),
+              ],
+            );
+          },
+        ),
       ),
     );
   }

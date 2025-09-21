@@ -575,4 +575,8 @@ class TrufiLocation {
   String toString() => '${position.latitude},${position.longitude}';
 
   bool get isLatLngDefined => position.latitude != 0 && position.longitude != 0;
+
+  String get subTitle => address != null && address!.isNotEmpty
+      ? address!
+      : "${position.latitude.toStringAsFixed(3)}, ${position.longitude.toStringAsFixed(3)}";
 }

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import 'package:trufi_core/pages/home/repository/hive_local_repository.dart';
+import 'package:trufi_core/pages/home/service/routing_service/otp_2_7/graphql_plan_data_source.dart';
 import 'package:trufi_core/pages/home/service/routing_service/otp_stadtnavi/graphql_plan_data_source.dart';
 import 'package:trufi_core/pages/home/widgets/routing_map/routing_map_selected.dart';
 import 'package:trufi_core/consts.dart';
@@ -88,7 +89,7 @@ class RoutingMapComponent extends IRoutingMapComponent {
 
   final MapRouteHiveLocalRepository mapRouteHiveLocal =
       MapRouteHiveLocalRepository();
-  final IPlanRepository service = StadtnaviGraphQLPlanDataSource(
+  final IPlanRepository service = GraphQLPlanDataSource(
     ApiConfig().openTripPlannerUrl,
   );
 

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:trufi_core/localization/app_localization.dart';
 import 'package:trufi_core/pages/saved_places/widgets/location_tiler.dart';
 import 'package:trufi_core/repositories/location/location_repository.dart';
 import 'package:trufi_core/screens/route_navigation/maps/trufi_map_controller.dart';
@@ -8,7 +9,7 @@ import 'package:trufi_core/widgets/maps/choose_location/choose_location.dart';
 class SavedPlacesPage extends StatefulWidget {
   static const String route = '/Places';
 
-  static Future<void> navigateToSavedPlaces(BuildContext context) async {
+  static Future<void> navigate(BuildContext context) async {
     await Navigator.of(
       context,
     ).push(MaterialPageRoute(builder: (context) => const SavedPlacesPage()));
@@ -45,6 +46,7 @@ class _SavedPlacesPageState extends State<SavedPlacesPage> {
 
   @override
   Widget build(BuildContext context) {
+    final localization = AppLocalization.of(context);
     final theme = Theme.of(context);
     final titleStyle = TextStyle(
       color: theme.colorScheme.onSurface,
@@ -52,7 +54,13 @@ class _SavedPlacesPageState extends State<SavedPlacesPage> {
       fontWeight: FontWeight.w600,
     );
     return Scaffold(
-      appBar: AppBar(title: Row(children: [Text("Your Places")])),
+      appBar: AppBar(
+        title: Row(
+          children: [
+            Text(localization.translate(LocalizationKey.yourPlacesMenu)),
+          ],
+        ),
+      ),
       body: Scrollbar(
         child: ListView(
           padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 15),
@@ -64,7 +72,13 @@ class _SavedPlacesPageState extends State<SavedPlacesPage> {
                   enableSetPosition: true,
                   isDefaultLocation: true,
                   updateLocation: locationRepository.updateMyDefaultPlace,
-                  selectPositionOnPage: _selectPosition,
+                  selectPositionOnPage: (context, {isOrigin, position}) =>
+                      _selectPosition(
+                        context,
+                        isOrigin: isOrigin,
+                        position: position, 
+                        hideLocationDetails: true,
+                      ),
                 );
               }).toList(),
             ),
@@ -137,11 +151,13 @@ class _SavedPlacesPageState extends State<SavedPlacesPage> {
     BuildContext context, {
     bool? isOrigin,
     LatLng? position,
+    bool? hideLocationDetails,
   }) async {
     return await ChooseLocationPage.selectLocation(
       context,
       position: position,
       isOrigin: isOrigin,
+      hideLocationDetails: hideLocationDetails,
     );
   }
 }

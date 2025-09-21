@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:trufi_core/localization/app_localization.dart';
 import 'package:trufi_core/repositories/location/location_repository.dart';
+import 'package:trufi_core/repositories/location/models/defaults_location.dart';
 import 'package:trufi_core/screens/route_navigation/maps/trufi_map_controller.dart';
 import 'package:trufi_core/utils/icon_utils/icons.dart';
 import 'package:trufi_core/widgets/maps/choose_location/choose_location.dart';
@@ -97,6 +98,7 @@ class _FullScreenSearchModalState extends State<FullScreenSearchModal> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final localization = AppLocalization.of(context);
     final divider = Divider(
       height: 8,
       thickness: 8,
@@ -174,7 +176,6 @@ class _FullScreenSearchModalState extends State<FullScreenSearchModal> {
               ),
             ),
 
-
             ValueListenableBuilder<bool>(
               valueListenable: locationRepository.isLoading,
               builder: (context, loading, _) {
@@ -237,8 +238,15 @@ class _FullScreenSearchModalState extends State<FullScreenSearchModal> {
                                       e.type,
                                       color: theme.colorScheme.onSurface,
                                     ),
-                                    title: e.description,
-                                    subtitle: e.address ?? '',
+                                    title: localization.translate(
+                                      DefaultLocationExt.detect(e)?.l10nKey,
+                                    ),
+                                    subtitle: e.isLatLngDefined
+                                        ? e.subTitle
+                                        : localization.translate(
+                                            LocalizationKey
+                                                .defaultLocationSetLocation,
+                                          ),
                                     onTap: () async {
                                       if (e.isLatLngDefined) {
                                         _setLocation(location: e);
@@ -318,7 +326,7 @@ class _FullScreenSearchModalState extends State<FullScreenSearchModal> {
                             onTap: () => _setLocation(location: location),
                           ),
                         ),
-                        const _MoreFromHistory(),
+                        // const _MoreFromHistory(),
                         ...locationRepository.favoritePlaces.value.reversed.map(
                           (location) => PlaceTile(
                             location: location,
@@ -379,14 +387,14 @@ class _SearchOption extends StatelessWidget {
 class QuickActionPill extends StatelessWidget {
   final Widget icon;
   final String title;
-  final String subtitle;
+  final String? subtitle;
   final VoidCallback onTap;
   final Color iconBackgorundColor;
 
   const QuickActionPill({
     required this.icon,
     required this.title,
-    required this.subtitle,
+    this.subtitle,
     required this.onTap,
     this.iconBackgorundColor = const Color(0xFFD9E5EB),
   });
@@ -426,15 +434,16 @@ class QuickActionPill extends StatelessWidget {
                         fontWeight: FontWeight.w500,
                       ),
                     ),
-                    Text(
-                      subtitle,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        color: theme.colorScheme.onSurfaceVariant,
-                        height: 1,
+                    if (subtitle != null)
+                      Text(
+                        subtitle!,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: theme.colorScheme.onSurfaceVariant,
+                          height: 1,
+                        ),
                       ),
-                    ),
                   ],
                 ),
               ),
@@ -463,8 +472,8 @@ class PlaceTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final String title = location.description;
-    final String? subtitle = location.address;
+    final String title = location.displayName(AppLocalization.of(context));
+    final String? subtitle = location.subTitle;
     final String? metaPrimary = null;
     final Color? metaPrimaryColor = null;
     final String? metaSecondary = null;
