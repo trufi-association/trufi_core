@@ -123,18 +123,27 @@ class _RouteNavigationScreenState extends State<RouteNavigationScreen> {
         });
       },
       (coord) async {
-        if (routingMapComponent.origin == null) {
-          routingMapComponent.addOrigin(
+        if (routingMapComponent.destination == null) {
+          await routingMapComponent.addDestination(
             TrufiLocation(description: '', position: coord),
           );
-        } else if (routingMapComponent.destination == null) {
-          routingMapComponent.addDestination(
+          if (routingMapComponent.origin == null) {
+            final currentLocation = GPSLocationProvider().current;
+            if (currentLocation != null) {
+              await routingMapComponent.addOrigin(
+                TrufiLocation(
+                  description: 'Your Location',
+                  position: currentLocation,
+                ),
+              );
+            }
+          }
+        } else if (routingMapComponent.origin == null) {
+          await routingMapComponent.addOrigin(
             TrufiLocation(description: '', position: coord),
           );
-          await _fetchPlanWithLoading();
-        } else {
-          routingMapComponent.cleanOriginAndDestination();
         }
+        await _fetchPlanWithLoading();
       },
     );
 
@@ -201,78 +210,49 @@ class _RouteNavigationScreenState extends State<RouteNavigationScreen> {
                     return Stack(
                       children: [
                         MenuButton(),
-                        StreamBuilder<LatLng?>(
-                          initialData: null,
-                          stream: GPSLocationProvider().stream,
-                          builder: (context, snapshot) {
-                            final currentLocation = snapshot.data;
-                            return RouteSearchComponent(
-                              onSaveFrom: (location) async {
-                                await routingMapComponent.addOrigin(location);
-                                if (destination == null && currentLocation != null) {
-                                  await routingMapComponent.addDestination(
-                                    TrufiLocation(
-                                      description: 'Your Location',
-                                      position: currentLocation,
-                                    ),
-                                  );
-                                }
-                                await _fetchPlanWithLoading();
-                              },
-                              onClearFrom: () {},
-                              onSaveTo: (location) async {
-                                await routingMapComponent.addDestination(
-                                  location,
-                                );
-                                if (origin == null && currentLocation != null) {
-                                  await routingMapComponent.addOrigin(
-                                    TrufiLocation(
-                                      description: 'Your Location',
-                                      position: currentLocation,
-                                    ),
-                                  );
-                                }
-                                await _fetchPlanWithLoading();
-                              },
-                              onClearTo: () async {
-                                routingMapComponent.cleanOriginAndDestination();
-                                await _fetchPlanWithLoading();
-                              },
-                              onFetchPlan: () {},
-                              onReset: () {},
-                              onSwap: () async {
-                                if (routingMapComponent.destination != null &&
-                                    routingMapComponent.origin != null) {
-                                  final temp = routingMapComponent.origin;
-                                  await routingMapComponent.addOrigin(
-                                    routingMapComponent.destination!,
-                                  );
-                                  await routingMapComponent.addDestination(
-                                    temp!,
-                                  );
-                                  await _fetchPlanWithLoading();
-                                }
-                              },
-                              origin:
-                                  destination != null &&
-                                      origin == null &&
-                                      currentLocation != null
-                                  ? TrufiLocation(
-                                      description: 'Your Location',
-                                      position: currentLocation,
-                                    )
-                                  : origin,
-                              destination:
-                                  origin != null &&
-                                      destination == null &&
-                                      currentLocation != null
-                                  ? TrufiLocation(
-                                      description: 'Your Location',
-                                      position: currentLocation,
-                                    )
-                                  : destination,
-                            );
+                        RouteSearchComponent(
+                          onSaveFrom: (location) async {
+                            await routingMapComponent.addOrigin(location);
+
+                            await _fetchPlanWithLoading();
                           },
+                          onClearFrom: () {},
+                          onSaveTo: (location) async {
+                            await routingMapComponent.addDestination(location);
+                            if (routingMapComponent.origin == null) {
+                              final currentLocation =
+                                  GPSLocationProvider().current;
+                              if (currentLocation != null) {
+                                await routingMapComponent.addOrigin(
+                                  TrufiLocation(
+                                    description: 'Your Location',
+                                    position: currentLocation,
+                                  ),
+                                );
+                              }
+                            }
+
+                            await _fetchPlanWithLoading();
+                          },
+                          onClearTo: () async {
+                            routingMapComponent.cleanOriginAndDestination();
+                            await _fetchPlanWithLoading();
+                          },
+                          onFetchPlan: () {},
+                          onReset: () {},
+                          onSwap: () async {
+                            if (routingMapComponent.destination != null &&
+                                routingMapComponent.origin != null) {
+                              final temp = routingMapComponent.origin;
+                              await routingMapComponent.addOrigin(
+                                routingMapComponent.destination!,
+                              );
+                              await routingMapComponent.addDestination(temp!);
+                              await _fetchPlanWithLoading();
+                            }
+                          },
+                          origin: origin,
+                          destination: destination,
                         ),
                         if (plan != null)
                           TrufiBottomSheet(
