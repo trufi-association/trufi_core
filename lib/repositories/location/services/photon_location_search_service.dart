@@ -22,13 +22,21 @@ class PhotonLocationSearchService implements ILocationSearchService {
     String query, {
     int limit = 15,
     String? correlationId,
-    String? lang = "es",
+    String? lang = "en",
   }) async {
     final extraQueryParameters = queryParameters ?? {};
-    final Uri request = Uri.parse("$photonUrl/api").replace(
+    final Uri request = Uri.parse("$photonUrl/search").replace(
       queryParameters: {
-        "q": query,
-        "bbox": [29.954,-1.997,30.167,-1.845].join(','),
+        "text": query,
+        "boundary.rect.min_lat": "48.34164",
+        "boundary.rect.max_lat": "48.97661",
+        "boundary.rect.min_lon": "9.95635",
+        "boundary.rect.max_lon": "8.530883",
+        "focus.point.lat": "48.5957",
+        "focus.point.lon": "8.8675",
+        "lang": lang,
+        "sources": "oa,osm,gtfshb",
+        "layers": "station,venue,address,street",
         ...extraQueryParameters,
       },
     );
@@ -49,26 +57,37 @@ class PhotonLocationSearchService implements ILocationSearchService {
   }
 
   @override
-  Future<TrufiLocation> reverseGeodecoding(LatLng location) async {
+  Future<TrufiLocation> reverseGeodecoding(
+    LatLng location, {
+    String? lang = "en",
+  }) async {
     final response = await _fetchRequest(
       Uri.parse(
-        "$photonUrl/reverse?lon=${location.longitude}&lat=${location.latitude}",
+        "$photonUrl/reverse?point.lat=${location.latitude}&point.lon=${location.longitude}&boundary.circle.radius=0.1&lang=$lang&size=1&layers=address&zones=1",
       ),
     );
     final body = jsonDecode(utf8.decode(response.bodyBytes));
-    if (body["type"] == "FeatureCollection") {
-      final features = body["features"] as List;
-      if (features.isNotEmpty) {
-        final feature = features.first;
-        final properties = feature["properties"];
-        return LocationSearchResponse(
-          name: properties["name"],
-          street: properties["street"],
-          latLng: location,
-        ).toTrufiLocation();
+    final features = body["features"] as List;
+    final feature = features.first;
+    final properties = feature["properties"];
+    final String street = properties["street"]?.toString() ?? "";
+    final String houseNumbre = properties["housenumber"]?.toString() ?? "";
+    final String postalcode = properties["postalcode"]?.toString() ?? "";
+    final String locality = properties["locality"]?.toString() ?? "";
+    String streetHouse = "";
+    if (street != '') {
+      if (houseNumbre != '') {
+        streetHouse = "$street $houseNumbre,";
+      } else {
+        streetHouse = "$street,";
       }
     }
-    throw Exception("No data found");
+
+    return LocationSearchResponse(
+      name: properties?["name"]?.toString().trim() ?? 'Not name',
+      street: "$streetHouse $postalcode $locality".trim(),
+      latLng: location,
+    ).toTrufiLocation();
   }
 
   Future<http.Response> _fetchRequest(Uri request) async {

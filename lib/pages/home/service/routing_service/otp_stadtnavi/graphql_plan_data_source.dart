@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:graphql/client.dart';
+import 'package:intl/intl.dart';
 import 'package:gql/language.dart';
 
 import 'package:trufi_core/models/plan_entity.dart';
@@ -22,6 +23,11 @@ class StadtnaviGraphQLPlanDataSource extends IPlanRepository {
   static const maxRetries = 5;
   String parsePlace(TrufiLocation location) {
     return "${location.description}::${location.position.latitude},${location.position.longitude}";
+  }
+
+  String parseTime(DateTime? date) {
+    final tempDate = date ?? DateTime.now();
+    return DateFormat('HH:mm:ss').format(tempDate);
   }
 
   @override
@@ -55,6 +61,7 @@ class StadtnaviGraphQLPlanDataSource extends IPlanRepository {
       variables: <String, dynamic>{
         'fromPlace': parsePlace(fromLocation),
         'toPlace': parsePlace(toLocation),
+        'time': parseTime(DateTime.now().copyWith(hour: 15)),
         'numItineraries': 10,
         'modes': [
           {"mode": "BUS"},

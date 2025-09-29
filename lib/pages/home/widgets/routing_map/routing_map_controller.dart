@@ -89,7 +89,7 @@ class RoutingMapComponent extends IRoutingMapComponent {
 
   final MapRouteHiveLocalRepository mapRouteHiveLocal =
       MapRouteHiveLocalRepository();
-  final IPlanRepository service = GraphQLPlanDataSource(
+  final IPlanRepository service = StadtnaviGraphQLPlanDataSource(
     ApiConfig().openTripPlannerUrl,
   );
 

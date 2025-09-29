@@ -9,12 +9,12 @@ class ApiConfig {
     return _instance;
   }
 
-  String baseDomain = "otp.kigali.trufi.dev"; // For dev
+  String baseDomain = "api.dev.stadtnavi.eu"; // For dev
   // String baseDomain = "api.stadtnavi.de"; // For PROD
 
-  String get openTripPlannerUrl => "https://$baseDomain/otp/transmodel/v3";
+  String get openTripPlannerUrl => "https://$baseDomain/otp/gtfs/v1";
   String get faresURL => "https://$baseDomain/fares";
-  LatLng get originMap => LatLng(-1.96617, 30.06409);
+  LatLng get originMap =>  LatLng(48.5950, 8.8672);
   
   String get carpoolOffers =>
       "https://dev.stadtnavi.eu/carpool-offers"; // For dev
@@ -27,8 +27,7 @@ class ApiConfig {
   //     "https://track.stadtnavi.de/matomo.php"; // For PROD
 
 
-  String searchPhotonEndpoint = "https://photon.komoot.io";
-  // String searchPhotonEndpoint = "https://navigator.trufi.app/photon";
+  String searchPhotonEndpoint = "https://photon-eu.stadtnavi.eu/pelias/v1/";
   
   String reverseGeodecodingPhotonEndpoint =
       "https://kigali.trufi.dev/photon/reverse/";
