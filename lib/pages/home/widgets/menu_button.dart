@@ -18,10 +18,8 @@ class MenuButton extends StatelessWidget {
           _showMenuOptions(context);
         },
         icon: const Icon(Icons.menu),
-        style:  ButtonStyle(
-          backgroundColor: WidgetStatePropertyAll(
-            theme.colorScheme.surface,
-          ),
+        style: ButtonStyle(
+          backgroundColor: WidgetStatePropertyAll(theme.colorScheme.surface),
           elevation: WidgetStatePropertyAll(2.0),
           shadowColor: WidgetStatePropertyAll(Colors.black87),
         ),
@@ -72,15 +70,21 @@ class MenuButton extends StatelessWidget {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const CircleAvatar(
-                          radius: 40,
-                          backgroundImage: NetworkImage(
-                            'https://trufi.app/wp-content/uploads/2019/02/48.png',
+                        ClipRRect(
+                          borderRadius: const BorderRadius.all(
+                            Radius.circular(50),
+                          ),
+                          child: Image.asset(
+                            'assets/images/logo.png',
+                            height: 80,
+
+                            width: 80,
+                            fit: BoxFit.cover,
                           ),
                         ),
                         const SizedBox(height: 12),
                         Text(
-                          'Trufi Transit',
+                          'stadtnavi Herrenberg',
                           style: theme.textTheme.titleMedium?.copyWith(
                             fontWeight: FontWeight.bold,
                             color: Colors.white,
