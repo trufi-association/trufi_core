@@ -8,6 +8,19 @@ import 'package:trufi_core/screens/route_navigation/maps/trufi_map_controller.da
 import 'package:trufi_core/widgets/base_marker/from_marker.dart';
 import 'package:trufi_core/widgets/base_marker/to_marker.dart';
 
+typedef RouteSearchBuilder =
+    Widget Function({
+      required void Function(TrufiLocation) onSaveFrom,
+      required void Function() onClearFrom,
+      required void Function(TrufiLocation) onSaveTo,
+      required void Function() onClearTo,
+      required void Function() onFetchPlan,
+      required void Function() onReset,
+      required void Function() onSwap,
+      required TrufiLocation? origin,
+      required TrufiLocation? destination,
+    });
+
 class RouteEndpoints {
   final TrufiLocation origin;
   final TrufiLocation destination;

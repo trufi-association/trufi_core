@@ -2,7 +2,6 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart' as latlng;
-import 'package:latlong2/latlong.dart';
 import 'package:trufi_core/consts.dart';
 import 'package:trufi_core/pages/home/service/i_plan_repository.dart';
 import 'package:trufi_core/pages/home/widgets/menu_button.dart';
@@ -11,7 +10,6 @@ import 'package:trufi_core/pages/home/widgets/search_bar/location_search_bar.dar
 import 'package:trufi_core/pages/home/widgets/travel_bottom_sheet/travel_bottom_sheet.dart';
 import 'package:trufi_core/repositories/services/gps_lcoation/gps_location.dart';
 import 'package:trufi_core/screens/route_navigation/map_layers/fit_camera_layer.dart';
-import 'package:trufi_core/screens/route_navigation/map_layers/weather_stations/weather_stations_layer.dart';
 import 'package:trufi_core/screens/route_navigation/maps/flutter_map.dart';
 import 'package:trufi_core/screens/route_navigation/maps/trufi_map_controller.dart';
 import 'package:trufi_core/screens/route_navigation/maps/maplibre_gl.dart';
@@ -25,6 +23,7 @@ class RouteNavigationScreen extends StatefulWidget {
     this.mapLayerBuilder = defaultMapLayerBuilder,
     this.routingMapComponent = defaultRoutingMapComponent,
     this.fitCameraLayer = defaultFitCameraLayer,
+    this.routeSearchBuilder = defaultRouteSearchBuilder,
   });
 
   final List<TrufiMapRender> Function(
@@ -36,6 +35,9 @@ class RouteNavigationScreen extends StatefulWidget {
 
   final List<TrufiLayer> Function(TrufiMapController controller)
   mapLayerBuilder;
+
+  final RouteSearchBuilder routeSearchBuilder;
+
   final IRoutingMapComponent Function(
     TrufiMapController controller,
     IPlanRepository? planRepository,
@@ -67,9 +69,7 @@ class RouteNavigationScreen extends StatefulWidget {
   static List<TrufiLayer> defaultMapLayerBuilder(
     TrufiMapController controller,
   ) {
-    return [
-      // WeatherStationsLayer(controller)
-    ];
+    return [];
   }
 
   static IRoutingMapComponent defaultRoutingMapComponent(
@@ -79,6 +79,30 @@ class RouteNavigationScreen extends StatefulWidget {
     return RoutingMapComponent(
       controller,
       customPlanRepository: customPlanRepository,
+    );
+  }
+
+  static Widget defaultRouteSearchBuilder({
+    required void Function(TrufiLocation) onSaveFrom,
+    required void Function() onClearFrom,
+    required void Function(TrufiLocation) onSaveTo,
+    required void Function() onClearTo,
+    required void Function() onFetchPlan,
+    required void Function() onReset,
+    required void Function() onSwap,
+    required TrufiLocation? origin,
+    required TrufiLocation? destination,
+  }) {
+    return RouteSearchComponent(
+      onSaveFrom: onSaveFrom,
+      onClearFrom: onClearFrom,
+      onSaveTo: onSaveTo,
+      onClearTo: onClearTo,
+      onFetchPlan: onFetchPlan,
+      onReset: onReset,
+      onSwap: onSwap,
+      origin: origin,
+      destination: destination,
     );
   }
 
@@ -219,7 +243,7 @@ class _RouteNavigationScreenState extends State<RouteNavigationScreen> {
                     return Stack(
                       children: [
                         MenuButton(),
-                        RouteSearchComponent(
+                        widget.routeSearchBuilder(
                           onSaveFrom: (location) async {
                             await routingMapComponent.addOrigin(location);
 
@@ -277,7 +301,7 @@ class _RouteNavigationScreenState extends State<RouteNavigationScreen> {
                               );
                             },
                             child: TransitBottomSheet(
-                              plan: plan!,
+                              plan: plan,
                               selectedItinerary: selectedItinerary,
                               updateCamera:
                                   ({bearing, target, visibleRegion, zoom}) {
