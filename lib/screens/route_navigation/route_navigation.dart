@@ -4,12 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart' as latlng;
 import 'package:latlong2/latlong.dart';
 import 'package:trufi_core/consts.dart';
+import 'package:trufi_core/pages/home/service/i_plan_repository.dart';
 import 'package:trufi_core/pages/home/widgets/menu_button.dart';
 import 'package:trufi_core/pages/home/widgets/routing_map/routing_map_controller.dart';
 import 'package:trufi_core/pages/home/widgets/search_bar/location_search_bar.dart';
 import 'package:trufi_core/pages/home/widgets/travel_bottom_sheet/travel_bottom_sheet.dart';
 import 'package:trufi_core/repositories/services/gps_lcoation/gps_location.dart';
 import 'package:trufi_core/screens/route_navigation/map_layers/fit_camera_layer.dart';
+import 'package:trufi_core/screens/route_navigation/map_layers/weather_stations/weather_stations_layer.dart';
 import 'package:trufi_core/screens/route_navigation/maps/flutter_map.dart';
 import 'package:trufi_core/screens/route_navigation/maps/trufi_map_controller.dart';
 import 'package:trufi_core/screens/route_navigation/maps/maplibre_gl.dart';
@@ -34,7 +36,10 @@ class RouteNavigationScreen extends StatefulWidget {
 
   final List<TrufiLayer> Function(TrufiMapController controller)
   mapLayerBuilder;
-  final IRoutingMapComponent Function(TrufiMapController controller)
+  final IRoutingMapComponent Function(
+    TrufiMapController controller,
+    IPlanRepository? planRepository,
+  )
   routingMapComponent;
   final IFitCameraLayer Function(TrufiMapController controller) fitCameraLayer;
 
@@ -63,14 +68,18 @@ class RouteNavigationScreen extends StatefulWidget {
     TrufiMapController controller,
   ) {
     return [
-      // WeatherStationsLayer(controller),
+      // WeatherStationsLayer(controller)
     ];
   }
 
   static IRoutingMapComponent defaultRoutingMapComponent(
     TrufiMapController controller,
+    IPlanRepository? customPlanRepository,
   ) {
-    return RoutingMapComponent(controller);
+    return RoutingMapComponent(
+      controller,
+      customPlanRepository: customPlanRepository,
+    );
   }
 
   static IFitCameraLayer defaultFitCameraLayer(TrufiMapController controller) {
@@ -148,7 +157,7 @@ class _RouteNavigationScreenState extends State<RouteNavigationScreen> {
     );
 
     mapLayerRenders = widget.mapLayerBuilder(mapController);
-    routingMapComponent = widget.routingMapComponent(mapController);
+    routingMapComponent = widget.routingMapComponent(mapController, null);
     fitCameraLayer = widget.fitCameraLayer(mapController);
   }
 

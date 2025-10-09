@@ -9,14 +9,13 @@ import 'package:trufi_core/repositories/location/interfaces/i_location_search_se
 import 'package:trufi_core/repositories/location/interfaces/i_location_service.dart';
 import 'package:trufi_core/repositories/location/models/defaults_location.dart';
 import 'package:trufi_core/repositories/location/services/hive_local_service.dart';
-import 'package:trufi_core/repositories/location/services/photon_location_search_service.dart';
 import 'package:trufi_core/screens/route_navigation/maps/trufi_map_controller.dart';
 
 class LocationRepository {
   final ILocationService locationService = HiveLocationService();
 
   final ILocationSearchService locationSearchService =
-      PhotonLocationSearchService(photonUrl: ApiConfig().searchPhotonEndpoint);
+      ApiConfig().locationSearchService;
 
   LocationRepository()
     : myPlaces = ValueNotifier([]),
@@ -36,11 +35,7 @@ class LocationRepository {
   CancelableOperation<List<TrufiLocation>>? _fetchLocationOperation;
   int _lastIssuedToken = 0;
 
-  Future<void> fetchLocations(
-    String query, {
-    String? correlationId,
-    int limit = 30,
-  }) async {
+  Future<void> fetchLocations(String query, {int limit = 30}) async {
     final normalized = query.trim().toLowerCase();
 
     // If the query is empty, cancel any running operation,

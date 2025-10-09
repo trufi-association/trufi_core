@@ -89,11 +89,13 @@ class RoutingMapComponent extends IRoutingMapComponent {
 
   final MapRouteHiveLocalRepository mapRouteHiveLocal =
       MapRouteHiveLocalRepository();
-  final IPlanRepository service = GraphQLPlanDataSource(
-    ApiConfig().openTripPlannerUrl,
-  );
+  final IPlanRepository planRepository;
 
-  RoutingMapComponent(super.controller) {
+  RoutingMapComponent(super.controller, {IPlanRepository? customPlanRepository})
+    : planRepository =
+          customPlanRepository ??
+          GraphQLPlanDataSource(ApiConfig().openTripPlannerUrl),
+      super() {
     mapRouteHiveLocal.loadRepository().then((_) async {
       final results = await Future.wait([
         mapRouteHiveLocal.getOriginPosition(),
@@ -145,7 +147,7 @@ class RoutingMapComponent extends IRoutingMapComponent {
   Future<void> fetchPlan(BuildContext context) async {
     if (origin == null || destination == null) return;
 
-    plan = await service.fetchPlanAdvanced(
+    plan = await planRepository.fetchPlanAdvanced(
       fromLocation: origin!,
       toLocation: destination!,
     );
