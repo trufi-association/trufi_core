@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:trufi_core/consts.dart';
 import 'package:trufi_core/screens/route_navigation/map_layers/sorted_list.dart';
 import 'package:trufi_core/screens/route_navigation/map_layers/tile_grid_layer.dart';
 import 'package:trufi_core/screens/route_navigation/maps/trufi_map_controller.dart';
@@ -29,12 +30,12 @@ class WeatherStationsLayer extends TrufiLayer {
     tileGrid = TileGrid<WeatherFeature>(
       layer: this,
       uriTemplate:
-          "https://api.dev.stadtnavi.eu/map/v1/weather-stations/{z}/{x}/{y}.pbf",
+          "https://${ApiConfig().baseDomain}/map/v1/weather-stations/{z}/{x}/{y}.pbf",
       fromGeoJsonPoint: (geoJson) => WeatherFeature.fromGeoJsonPoint(geoJson),
       onFetchElements: onFetchElements,
       granularityLevels: 3,
       color: Colors.red,
-      showGrid: true,
+      showGrid: false,
     );
   }
 
