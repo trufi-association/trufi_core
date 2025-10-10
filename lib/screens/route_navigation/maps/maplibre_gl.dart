@@ -245,8 +245,8 @@ class _TrufiMapLibreMapState extends State<TrufiMapLibreMap> {
     MapLibreMapController ctl,
   ) async {
     final features = <Map<String, dynamic>>[];
-
-    for (final marker in layer.markers) {
+    final markers = [...layer.markers];
+    for (final marker in markers) {
       final imageId = marker.widget.hashCode.toString();
       await _ensureImageLoaded(imageId, () async {
         if (!mounted) return;
