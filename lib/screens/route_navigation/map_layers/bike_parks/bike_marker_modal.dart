@@ -20,9 +20,7 @@ class BikeMarkerModal extends StatelessWidget {
                 height: 30,
                 width: 30,
                 margin: const EdgeInsets.symmetric(horizontal: 10),
-                child: SvgPicture.string(
-                  bikeParkMarkerIcons[bikeParkFeature.type] ?? "",
-                ),
+                child: bikeParkMarkerIcons[bikeParkFeature.type],
               ),
               Expanded(
                 child: Text(

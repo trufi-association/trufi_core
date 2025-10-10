@@ -51,7 +51,7 @@ class BikeParksLayer extends TrufiLayer {
     }
 
     if (markersToAdd.isNotEmpty) {
-      addMarkers(markersToAdd.take(10));
+      addMarkers(markersToAdd);
     }
   }
 
@@ -59,7 +59,7 @@ class BikeParksLayer extends TrufiLayer {
     return TrufiMarker(
       id: '$id:${f.id}',
       position: f.position,
-      widget: SvgPicture.string(bikeParkMarkerIcons[f.type] ?? ''),
+      widget: bikeParkMarkerIcons[BikeParkLayerIds.covered]!,
       layerLevel: 1,
       size: const Size(20, 20),
       buildPanel: (context) {
