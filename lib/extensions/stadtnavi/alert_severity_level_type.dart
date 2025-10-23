@@ -1,0 +1,121 @@
+import 'package:flutter/material.dart';
+import 'package:trufi_core/localization/app_localization.dart';
+import 'package:trufi_core/models/enums/alert_severity_level_type.dart';
+import 'package:trufi_core/models/enums/custom_icons.dart';
+import 'package:flutter/widgets.dart';
+import 'package:flutter_svg/svg.dart';
+
+extension AlertSeverityLevelTypeExtension on AlertSeverityLevelTypeTrufi {
+  Widget getWithBigCautionIcon({Color? color, double size = 24}) {
+    return Container(
+      width: size,
+      height: size,
+      padding: const EdgeInsets.all(2),
+      child: FittedBox(
+        child: this == AlertSeverityLevelTypeTrufi.info
+            ? infoSvg()
+            : cautionNoExclIcon(color: const Color(0xFFDC0451)),
+      ),
+    );
+  }
+
+  Widget getServiceAlertIcon({Color? color, double size = 24}) {
+    return Container(
+      width: size,
+      height: size,
+      padding: const EdgeInsets.all(2),
+      child: FittedBox(
+        child: _images(
+          this == AlertSeverityLevelTypeTrufi.info
+              ? AlertSeverityLevelTypeTrufi.info
+              : AlertSeverityLevelTypeTrufi.severe,
+          color,
+        ),
+      ),
+    );
+  }
+
+  static Widget? _images(
+    AlertSeverityLevelTypeTrufi transportMode,
+    Color? color,
+  ) {
+    switch (transportMode) {
+      case AlertSeverityLevelTypeTrufi.unknownseverity:
+        return null;
+      case AlertSeverityLevelTypeTrufi.info:
+        return infoSvg();
+      case AlertSeverityLevelTypeTrufi.warning:
+        return null;
+      case AlertSeverityLevelTypeTrufi.severe:
+        return cautionSvg(
+          color: Colors.white,
+          backColor: const Color(0xFFDC0451),
+        );
+      // ignore: unreachable_switch_default
+      default:
+        return null;
+    }
+  }
+
+  String translateValue(AppLocalization localization) {
+    switch (this) {
+      case AlertSeverityLevelTypeTrufi.unknownseverity:
+        return "localization.itineraryDetailsRouteHasInfoAlert";
+      case AlertSeverityLevelTypeTrufi.info:
+        return "localization.itineraryDetailsRouteHasSevereAlert";
+      case AlertSeverityLevelTypeTrufi.warning:
+        return "localization.itineraryDetailsRouteHasUnknownAlert";
+      case AlertSeverityLevelTypeTrufi.severe:
+        return "localization.itineraryDetailsRouteHasWarningAlert";
+      // ignore: unreachable_switch_default
+      default:
+        return 'typeError';
+    }
+  }
+}
+
+String info({String color = 'FFFFFF'}) =>
+    '''
+<svg id="icon-icon_info" viewBox="0 0 1024 1024">
+	<path class="path1" d="M512-0.007c-282.776 0-512.007 229.231-512.007 512.007s229.231 512.007 512.007 512.007 512.007-229.235 512.007-512.007-229.231-512.007-512.007-512.007zM645.984 806.647c-27.939 11.007-50.239 19.406-66.889 25.19-16.654 5.784-35.984 8.677-57.999 8.677-33.867 0-60.188-8.255-78.951-24.764-18.771-16.509-28.152-37.465-28.152-62.865 0-9.873 0.701-19.963 2.117-30.269 1.409-10.299 3.667-21.939 6.773-34.926l34.947-123.616c3.121-11.853 5.747-23.073 7.864-33.654s3.175-20.244 3.175-28.998c0-15.801-3.255-26.808-9.757-33.022-6.51-6.206-18.955-9.313-37.353-9.313-9.057 0-18.319 1.416-27.805 4.234-9.486 2.825-17.622 5.502-24.41 8.045l9.327-38.101c22.885-9.313 44.781-17.282 65.69-23.918 20.909-6.629 40.691-9.949 59.343-9.949 33.625 0 59.545 8.117 77.766 24.341 18.218 16.231 27.332 37.328 27.332 63.291 0 5.365-0.636 14.818-1.904 28.365s-3.598 25.967-6.987 37.252l-34.814 123.194c-2.832 9.88-5.386 21.166-7.648 33.867s-3.392 22.3-3.392 28.788c0 16.372 3.659 27.516 10.989 33.445 7.326 5.928 20.010 8.89 38.054 8.89 8.453 0 18.030-1.481 28.741-4.443 10.707-2.962 18.46-5.57 23.257-7.832l-9.317 38.090zM639.846 306.47c-16.231 15.104-35.771 22.65-58.631 22.65s-42.479-7.547-58.844-22.65c-16.372-15.097-24.554-33.369-24.554-54.823 0-21.447 8.182-39.795 24.554-55.033 16.365-15.241 35.984-22.86 58.844-22.86s42.4 7.619 58.631 22.86c16.224 15.241 24.341 33.589 24.341 55.033 0 21.455-8.117 39.727-24.341 54.823z" fill='$color'>
+  </path>
+</svg>
+''';
+Widget infoSvg({Color? color, Color? backColor}) {
+  return SvgPicture.string(
+    caution(
+      color: decodeFillColor(color),
+      backColor: decodeFillColor(backColor),
+    ),
+  );
+}
+
+String caution({String color = 'FFFFFF', String backColor = 'DC0451'}) =>
+    '''
+<svg id="icon-icon_caution" viewBox="0 0 286.46 286.46">
+      <path d="M278.569 215.773c3.425 4.894 4.894 10.766 4.894 16.638 0 16.638-13.703 30.83-30.83 30.83H30.461c-10.767 0-21.042-5.872-26.427-15.66-5.382-9.298-5.382-21.042 0-30.34L115.121 24.432c5.382-9.298 15.659-15.171 26.424-15.171 11.256 0 21.042 5.872 26.915 15.171l110.109 191.341z" fill='$backColor'/>
+      <path fill="currentColor" d="M158.671 76.793c.49-5.872-3.425-10.276-8.808-10.276h-16.638c-5.383 0-8.809 4.404-8.318 10.276l8.318 95.916c.49 4.893 3.916 8.319 8.318 8.319 4.894 0 8.32-3.426 8.809-8.319l8.319-95.916zm-.488 137.512c0-9.298-6.852-16.149-16.64-16.149-9.296 0-16.637 6.852-16.637 16.149v2.447c0 9.298 7.341 16.149 16.637 16.149 9.787 0 16.64-6.852 16.64-16.149v-2.447z" fill='$color'/>
+</svg>
+''';
+Widget cautionSvg({Color? color, Color? backColor}) {
+  return SvgPicture.string(
+    caution(
+      color: decodeFillColor(color),
+      backColor: decodeFillColor(backColor),
+    ),
+  );
+}
+
+String _cautionNoExcl({String color = '#DC0451'}) =>
+    """
+<svg id="icon-icon_caution-no-excl" viewBox="0 0 12 12">
+    <g fill="none" fill-rule="evenodd">
+        <g fill='$color' stroke="#FFF">
+            <path d="M6 1c.305 0 .61.08.88.24.252.147.474.364.637.65h0l3.75 6.62c.332.589.29 1.251-.001 1.766-.152.268-.371.495-.64.653-.253.15-.55.238-.876.238h0H2.25c-.327 0-.624-.088-.877-.237-.269-.158-.488-.386-.64-.654C.443 9.761.401 9.1.734 8.51h0l3.75-6.62c.162-.286.384-.503.635-.65C5.39 1.08 5.695 1 6 1z" transform="translate(-203 -416) translate(0 -52) translate(0 77) translate(203 391)"/>
+        </g>
+    </g>
+</svg>z
+""";
+Widget cautionNoExclIcon({Color? color = const Color(0xFFDC0451)}) {
+  return SvgPicture.string(_cautionNoExcl(color: decodeFillColor(color)));
+}

@@ -3,6 +3,8 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:trufi_core/localization/app_localization_delegate.dart';
 
 enum LocalizationKey {
+  commonCancel,
+  commonOK,
   instructionDistanceMeters,
   instructionDistanceKm,
   selectedOnMap,
@@ -26,6 +28,8 @@ enum LocalizationKey {
 
 extension LocalizationKeyExtension on LocalizationKey {
   static final _valueMap = {
+    'common.cancel': LocalizationKey.commonCancel,
+    'common.oK': LocalizationKey.commonOK,
     'instruction.distance.meters': LocalizationKey.instructionDistanceMeters,
     'instruction.distance.km': LocalizationKey.instructionDistanceKm,
     'selected_on_map': LocalizationKey.selectedOnMap,
@@ -74,6 +78,8 @@ class AppLocalization {
   Future<void> loadLanguage() async {
     try {
       final content = <String, dynamic>{
+        'common.cancel': 'Cancel',
+        'common.oK': 'OK',
         'instruction.distance.meters': '\$1 m',
         'instruction.distance.km': '\$1 km',
         'selected_on_map': 'Selected on the map',

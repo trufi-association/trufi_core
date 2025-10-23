@@ -255,4 +255,87 @@ class PlanItineraryLeg {
       _trip: trip?.toJson(),
     };
   }
+
+  Map<String, dynamic> toJsonFares() {
+    return {
+      _legGeometry: {_points: points},
+      _mode: mode,
+      _route: route?.toJson() ?? shortName,
+      _routeLongName: routeLongName,
+      _distance: distance,
+      _duration: duration.inSeconds,
+      _agency: agency?.toJson(),
+      _realtimeState: realtimeState?.name,
+      _toPlace: toPlace?.toJson(),
+      _fromPlace: fromPlace?.toMapForFares(),
+      _startTime: startTime.millisecondsSinceEpoch,
+      _endTime: endTime.millisecondsSinceEpoch,
+      _steps: steps != null
+          ? List<dynamic>.from(steps!.map((x) => x.toMap()))
+          : null,
+      _intermediatePlaces: intermediatePlaces != null
+          ? List<dynamic>.from(intermediatePlaces!.map((x) => x.toJson()))
+          : null,
+      _pickupBookingInfo: pickupBookingInfo?.toJson(),
+      _dropOffBookingInfo: dropOffBookingInfo?.toJson(),
+      _intermediatePlace: intermediatePlace,
+      _transitLeg: transitLeg,
+      _rentedBike: rentedBike,
+      _interlineWithPreviousLeg: interlineWithPreviousLeg,
+      _trip: trip?.toJson(),
+    };
+  }
+
+  PlanItineraryLeg copyWith({
+    String? points,
+    String? mode,
+    RouteEntity? route,
+    String? shortName,
+    String? routeLongName,
+    double? distance,
+    Duration? duration,
+    AgencyEntity? agency,
+    RealtimeStateTrufi? realtimeState,
+    PlaceEntity? toPlace,
+    PlaceEntity? fromPlace,
+    DateTime? startTime,
+    DateTime? endTime,
+    bool? transitLeg,
+    bool? intermediatePlace,
+    bool? rentedBike,
+    bool? interlineWithPreviousLeg,
+    PickupBookingInfoEntity? pickupBookingInfo,
+    BookingInfoEntity? dropOffBookingInfo,
+    List<StepEntity>? steps,
+    List<PlaceEntity>? intermediatePlaces,
+    TripEntity? trip,
+    List<LatLng>? accumulatedPoints,
+  }) {
+    return PlanItineraryLeg(
+      points: points ?? this.points,
+      mode: mode ?? this.mode,
+      route: route ?? this.route,
+      shortName: shortName ?? this.shortName,
+      routeLongName: routeLongName ?? this.routeLongName,
+      distance: distance ?? this.distance,
+      duration: duration ?? this.duration,
+      agency: agency ?? this.agency,
+      realtimeState: realtimeState ?? this.realtimeState,
+      toPlace: toPlace ?? this.toPlace,
+      fromPlace: fromPlace ?? this.fromPlace,
+      startTime: startTime ?? this.startTime,
+      endTime: endTime ?? this.endTime,
+      transitLeg: transitLeg ?? this.transitLeg,
+      intermediatePlace: intermediatePlace ?? this.intermediatePlace,
+      rentedBike: rentedBike ?? this.rentedBike,
+      interlineWithPreviousLeg:
+          interlineWithPreviousLeg ?? this.interlineWithPreviousLeg,
+      pickupBookingInfo: pickupBookingInfo ?? this.pickupBookingInfo,
+      dropOffBookingInfo: dropOffBookingInfo ?? this.dropOffBookingInfo,
+      steps: steps ?? this.steps,
+      intermediatePlaces: intermediatePlaces ?? this.intermediatePlaces,
+      trip: trip ?? this.trip,
+      accumulatedPoints: accumulatedPoints ?? this.accumulatedPoints,
+    );
+  }
 }

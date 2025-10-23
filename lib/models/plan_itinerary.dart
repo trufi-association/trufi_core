@@ -96,4 +96,22 @@ class PlanItinerary {
     );
     return firstDeparture;
   }
+
+  String startDateText(AppLocalization localization) {
+    final tempDate = DateTime.now();
+    final nowDate = DateTime(tempDate.year, tempDate.month, tempDate.day);
+    if (nowDate.difference(startTime).inDays == 0) {
+      return '';
+    }
+    if (nowDate.difference(startTime).inDays == 1) {
+      return 'localization.commonTomorrow';
+    }
+    return DateFormat(
+      'E dd.MM.',
+      localization.locale.languageCode,
+    ).format(startTime);
+  }
+
+
+  double get totalBikingDistance => getTotalBikingDistance(legs);
 }

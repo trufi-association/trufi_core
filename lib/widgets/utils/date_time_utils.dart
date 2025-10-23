@@ -1,3 +1,5 @@
+import 'package:intl/intl.dart';
+
 abstract class DateTimeUtils {
   static String durationToStringTime(Duration duration) {
     final minutes = "${duration.inMinutes.remainder(60)} min";
@@ -17,4 +19,7 @@ abstract class DateTimeUtils {
   static String durationToStringMinutes(Duration duration) {
     return duration.inMinutes.toString();
   }
+
+  static String durationToHHmm(DateTime duration) =>
+      DateFormat('HH:mm').format(duration);
 }

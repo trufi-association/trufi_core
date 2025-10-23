@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:trufi_core/localization/app_localization.dart';
 import 'package:trufi_core/models/enums/custom_icons.dart';
 
 class TransportModeConfiguration {
@@ -114,14 +115,14 @@ TransportMode getTransportMode({
     value = enumType.contains(TransportMode.trufi.name)
         ? TransportMode.trufi
         : enumType.contains(TransportMode.micro.name)
-            ? TransportMode.bus
-            : enumType.contains(TransportMode.miniBus.name)
-                ? TransportMode.miniBus
-                : enumType.contains(TransportMode.gondola.name)
-                    ? TransportMode.gondola
-                    : enumType.contains(TransportMode.lightRail.name)
-                        ? TransportMode.lightRail
-                        : _getTransportModeByMode(mode);
+        ? TransportMode.bus
+        : enumType.contains(TransportMode.miniBus.name)
+        ? TransportMode.miniBus
+        : enumType.contains(TransportMode.gondola.name)
+        ? TransportMode.gondola
+        : enumType.contains(TransportMode.lightRail.name)
+        ? TransportMode.lightRail
+        : _getTransportModeByMode(mode);
   } else {
     value = _getTransportModeByMode(mode);
   }
@@ -262,38 +263,37 @@ extension TransportModeExtension on TransportMode {
     TransportMode.bicycle: 'RENT',
   };
 
-  // static String? _translates(
-  //     TransportMode mode, TrufiBaseLocalization localization) {
-  //   return {
-  //     TransportMode.airplane: null,
-  //     TransportMode.bicycle: localization.instructionVehicleBike,
-  //     TransportMode.bus: localization.instructionVehicleBus,
-  //     TransportMode.cableCar: localization.instructionVehicleGondola,
-  //     TransportMode.car: localization.instructionVehicleCar,
-  //     TransportMode.carPool: localization.instructionVehicleCarpool,
-  //     TransportMode.ferry: localization.instructionVehicleMetro,
-  //     TransportMode.flexible: null,
-  //     TransportMode.funicular: null,
-  //     TransportMode.gondola: localization.instructionVehicleGondola,
-  //     TransportMode.legSwitch: null,
-  //     TransportMode.rail: localization.instructionVehicleLightRail,
-  //     TransportMode.subway: localization.instructionVehicleMetro,
-  //     TransportMode.tram: localization.instructionVehicleCommuterTrain,
-  //     TransportMode.transit: null,
-  //     TransportMode.walk: localization.instructionVehicleBike,
-  //     // route icons for specific types of transportation
-  //     TransportMode.trufi: localization.instructionVehicleTrufi,
-  //     TransportMode.micro: localization.instructionVehicleMicro,
-  //     TransportMode.miniBus: localization.instructionVehicleMinibus,
-  //     TransportMode.lightRail: localization.instructionVehicleLightRail,
-  //   }[mode];
-  // }
+  static String? _translates(TransportMode mode, AppLocalization localization) {
+    return {
+      TransportMode.airplane: null,
+      TransportMode.bicycle: "localization.instructionVehicleBike",
+      TransportMode.bus: "localization.instructionVehicleBus",
+      TransportMode.cableCar: "localization.instructionVehicleGondola",
+      TransportMode.car: "localization.instructionVehicleCar",
+      TransportMode.carPool: "localization.instructionVehicleCarpool",
+      TransportMode.ferry: "localization.instructionVehicleMetro",
+      TransportMode.flexible: null,
+      TransportMode.funicular: null,
+      TransportMode.gondola: "localization.instructionVehicleGondola",
+      TransportMode.legSwitch: null,
+      TransportMode.rail: "localization.instructionVehicleLightRail",
+      TransportMode.subway: "localization.instructionVehicleMetro",
+      TransportMode.tram: "localization.instructionVehicleCommuterTrain",
+      TransportMode.transit: null,
+      TransportMode.walk: "localization.instructionVehicleBike",
+      // route icons for specific types of transportation
+      TransportMode.trufi: "localization.instructionVehicleTrufi",
+      TransportMode.micro: "localization.instructionVehicleMicro",
+      TransportMode.miniBus: "localization.instructionVehicleMinibus",
+      TransportMode.lightRail: "localization.instructionVehicleLightRail",
+    }[mode];
+  }
 
   String get name => names[this] ?? 'ERROR';
   String? get qualifier => qualifiers[this];
 
-  // String getTranslate(TrufiBaseLocalization localization) =>
-  //     _translates(this, localization) ?? 'No translate';
+  String getTranslate(AppLocalization localization) =>
+      _translates(this, localization) ?? 'No translate';
 
   Color get color =>
       TransportModeConfiguration._defaultColors[this] ??
@@ -309,16 +309,11 @@ extension TransportModeExtension on TransportMode {
       height: size,
       padding: const EdgeInsets.all(2),
       child: FittedBox(
-        child: _images(this, color) ??
+        child:
+            _images(this, color) ??
             (_icons[this] != null
-                ? Icon(
-                    _icons[this],
-                    color: color ?? color,
-                  )
-                : const Icon(
-                    Icons.error,
-                    color: Colors.red,
-                  )),
+                ? Icon(_icons[this], color: color ?? color)
+                : const Icon(Icons.error, color: Colors.red)),
       ),
     );
   }

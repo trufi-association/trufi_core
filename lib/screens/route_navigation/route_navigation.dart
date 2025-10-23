@@ -16,6 +16,22 @@ import 'package:trufi_core/screens/route_navigation/maps/maplibre_gl.dart';
 import 'package:trufi_core/widgets/app_lifecycle_reactor.dart';
 import 'package:trufi_core/widgets/bottom_sheet/trufi_bottom_sheet.dart';
 
+typedef BottomSheethBuilder =
+    Widget Function({
+      required void Function(TrufiLocation) onSaveFrom,
+      required void Function() onClearFrom,
+      required void Function(TrufiLocation) onSaveTo,
+      required void Function() onClearTo,
+      required void Function() onFetchPlan,
+      required void Function() onReset,
+      required void Function() onSwap,
+      required TrufiLocation? origin,
+      required TrufiLocation? destination,
+      required TrufiMarker selectedMarker,
+      required BuildContext context,
+      required IRoutingMapComponent iRoutingMapComponent,
+    });
+
 class RouteNavigationScreen extends StatefulWidget {
   const RouteNavigationScreen({
     super.key,
@@ -24,6 +40,7 @@ class RouteNavigationScreen extends StatefulWidget {
     this.routingMapComponent = defaultRoutingMapComponent,
     this.fitCameraLayer = defaultFitCameraLayer,
     this.routeSearchBuilder = defaultRouteSearchBuilder,
+    this.bottomSheethBuilder = defaultBottomSheethBuilder,
   });
 
   final List<TrufiMapRender> Function(
@@ -37,6 +54,8 @@ class RouteNavigationScreen extends StatefulWidget {
   mapLayerBuilder;
 
   final RouteSearchBuilder routeSearchBuilder;
+
+  final BottomSheethBuilder bottomSheethBuilder;
 
   final IRoutingMapComponent Function(
     TrufiMapController controller,
@@ -104,6 +123,23 @@ class RouteNavigationScreen extends StatefulWidget {
       origin: origin,
       destination: destination,
     );
+  }
+
+  static Widget defaultBottomSheethBuilder({
+    required void Function(TrufiLocation) onSaveFrom,
+    required void Function() onClearFrom,
+    required void Function(TrufiLocation) onSaveTo,
+    required void Function() onClearTo,
+    required void Function() onFetchPlan,
+    required void Function() onReset,
+    required void Function() onSwap,
+    required TrufiLocation? origin,
+    required TrufiLocation? destination,
+    required TrufiMarker selectedMarker,
+    required BuildContext context,
+    required IRoutingMapComponent iRoutingMapComponent,
+  }) {
+    return TrufiBottomSheet(child: selectedMarker.buildPanel!(context));
   }
 
   static IFitCameraLayer defaultFitCameraLayer(TrufiMapController controller) {
@@ -328,8 +364,54 @@ class _RouteNavigationScreenState extends State<RouteNavigationScreen> {
                             ),
                           )
                         else if (selectedMarker?.buildPanel != null)
-                          TrufiBottomSheet(
-                            child: selectedMarker!.buildPanel!(context),
+                          widget.bottomSheethBuilder(
+                            selectedMarker: selectedMarker!,
+                            context: context,
+                            iRoutingMapComponent: routingMapComponent,
+                            onSaveFrom: (location) async {
+                              await routingMapComponent.addOrigin(location);
+
+                              await _fetchPlanWithLoading();
+                            },
+                            onClearFrom: () {},
+                            onSaveTo: (location) async {
+                              await routingMapComponent.addDestination(
+                                location,
+                              );
+                              if (routingMapComponent.origin == null) {
+                                final currentLocation =
+                                    GPSLocationProvider().current;
+                                if (currentLocation != null) {
+                                  await routingMapComponent.addOrigin(
+                                    TrufiLocation(
+                                      description: 'Your Location',
+                                      position: currentLocation,
+                                    ),
+                                  );
+                                }
+                              }
+
+                              await _fetchPlanWithLoading();
+                            },
+                            onClearTo: () async {
+                              routingMapComponent.cleanOriginAndDestination();
+                              await _fetchPlanWithLoading();
+                            },
+                            onFetchPlan: () {},
+                            onReset: () {},
+                            onSwap: () async {
+                              if (routingMapComponent.destination != null &&
+                                  routingMapComponent.origin != null) {
+                                final temp = routingMapComponent.origin;
+                                await routingMapComponent.addOrigin(
+                                  routingMapComponent.destination!,
+                                );
+                                await routingMapComponent.addDestination(temp!);
+                                await _fetchPlanWithLoading();
+                              }
+                            },
+                            origin: origin,
+                            destination: destination,
                           ),
                         SafeArea(
                           child: Padding(

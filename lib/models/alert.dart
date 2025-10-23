@@ -88,57 +88,50 @@ class AlertEntity {
     alertId: json[_alertId],
     alertHash: json[_alertHash],
     feed: json[_feed],
-    agency:
-        json[_agency] != null
-            ? AgencyEntity.fromJson(json[_agency] as Map<String, dynamic>)
-            : null,
-    route:
-        json[_route] != null
-            ? RouteEntity.fromJson(json[_route] as Map<String, dynamic>)
-            : null,
-    trip:
-        json[_trip] != null
-            ? TripEntity.fromJson(json[_trip] as Map<String, dynamic>)
-            : null,
-    stop:
-        json[_stop] != null
-            ? StopEntity.fromJson(json[_stop] as Map<String, dynamic>)
-            : null,
-    patterns:
-        json[_patterns] != null
-            ? List<PatternOtpEntity>.from(
-              (json[_patterns] as List<dynamic>).map(
-                (x) => PatternOtpEntity.fromJson(x as Map<String, dynamic>),
-              ),
-            )
-            : null,
+    agency: json[_agency] != null
+        ? AgencyEntity.fromJson(json[_agency] as Map<String, dynamic>)
+        : null,
+    route: json[_route] != null
+        ? RouteEntity.fromJson(json[_route] as Map<String, dynamic>)
+        : null,
+    trip: json[_trip] != null
+        ? TripEntity.fromJson(json[_trip] as Map<String, dynamic>)
+        : null,
+    stop: json[_stop] != null
+        ? StopEntity.fromJson(json[_stop] as Map<String, dynamic>)
+        : null,
+    patterns: json[_patterns] != null
+        ? List<PatternOtpEntity>.from(
+            (json[_patterns] as List<dynamic>).map(
+              (x) => PatternOtpEntity.fromJson(x as Map<String, dynamic>),
+            ),
+          )
+        : null,
     alertHeaderText: json[_alertHeaderText],
-    alertHeaderTextTranslations:
-        json[_alertHeaderTextTranslations] != null
-            ? List<TranslatedStringEntity>.from(
-              (json[_alertHeaderTextTranslations] as List<dynamic>).map(
-                (x) => TranslatedStringEntity.fromJson(x as Map<String, dynamic>),
-              ),
-            )
-            : null,
+    alertHeaderTextTranslations: json[_alertHeaderTextTranslations] != null
+        ? List<TranslatedStringEntity>.from(
+            (json[_alertHeaderTextTranslations] as List<dynamic>).map(
+              (x) => TranslatedStringEntity.fromJson(x as Map<String, dynamic>),
+            ),
+          )
+        : null,
     alertDescriptionText: json[_alertDescriptionText],
     alertDescriptionTextTranslations:
         json[_alertDescriptionTextTranslations] != null
-            ? List<TranslatedStringEntity>.from(
-              (json[_alertDescriptionTextTranslations] as List<dynamic>).map(
-                (x) => TranslatedStringEntity.fromJson(x as Map<String, dynamic>),
-              ),
-            )
-            : null,
+        ? List<TranslatedStringEntity>.from(
+            (json[_alertDescriptionTextTranslations] as List<dynamic>).map(
+              (x) => TranslatedStringEntity.fromJson(x as Map<String, dynamic>),
+            ),
+          )
+        : null,
     alertUrl: json[_alertUrl],
-    alertUrlTranslations:
-        json[_alertUrlTranslations] != null
-            ? List<TranslatedStringEntity>.from(
-              (json[_alertUrlTranslations] as List<dynamic>).map(
-                (x) => TranslatedStringEntity.fromJson(x as Map<String, dynamic>),
-              ),
-            )
-            : null,
+    alertUrlTranslations: json[_alertUrlTranslations] != null
+        ? List<TranslatedStringEntity>.from(
+            (json[_alertUrlTranslations] as List<dynamic>).map(
+              (x) => TranslatedStringEntity.fromJson(x as Map<String, dynamic>),
+            ),
+          )
+        : null,
     alertEffect: getAlertEffectTypeByString(json[_alertEffect]),
     alertCause: getAlertCauseTypeByString(json[_alertCause]),
     alertSeverityLevel: getAlertSeverityLevelTypeByString(
@@ -146,12 +139,11 @@ class AlertEntity {
     ),
     effectiveStartDate: json[_effectiveStartDate],
     effectiveEndDate: json[_effectiveStartDate],
-    entities:
-        json[_entities] != null
-            ? List<String>.from(
-              (json[_entities] as List<dynamic>).map((x) => x[_typeName] ?? ''),
-            )
-            : null,
+    entities: json[_entities] != null
+        ? List<String>.from(
+            (json[_entities] as List<dynamic>).map((x) => x[_typeName] ?? ''),
+          )
+        : null,
     sourceAlert: json[_sourceAlert],
   );
 
@@ -164,29 +156,25 @@ class AlertEntity {
     _route: route?.toJson(),
     _trip: trip?.toJson(),
     _stop: stop?.toJson(),
-    _patterns:
-        patterns != null
-            ? List<dynamic>.from(patterns!.map((x) => x.toJson()))
-            : null,
+    _patterns: patterns != null
+        ? List<dynamic>.from(patterns!.map((x) => x.toJson()))
+        : null,
     _alertHeaderText: alertHeaderText,
-    _alertHeaderTextTranslations:
-        alertHeaderTextTranslations != null
-            ? List<dynamic>.from(
-              alertHeaderTextTranslations!.map((x) => x.toJson()),
-            )
-            : null,
+    _alertHeaderTextTranslations: alertHeaderTextTranslations != null
+        ? List<dynamic>.from(
+            alertHeaderTextTranslations!.map((x) => x.toJson()),
+          )
+        : null,
     _alertDescriptionText: alertDescriptionText,
-    _alertDescriptionTextTranslations:
-        alertDescriptionTextTranslations != null
-            ? List<dynamic>.from(
-              alertDescriptionTextTranslations!.map((x) => x.toJson()),
-            )
-            : null,
+    _alertDescriptionTextTranslations: alertDescriptionTextTranslations != null
+        ? List<dynamic>.from(
+            alertDescriptionTextTranslations!.map((x) => x.toJson()),
+          )
+        : null,
     _alertUrl: alertUrl,
-    _alertUrlTranslations:
-        alertUrlTranslations != null
-            ? List<dynamic>.from(alertUrlTranslations!.map((x) => x.toJson()))
-            : null,
+    _alertUrlTranslations: alertUrlTranslations != null
+        ? List<dynamic>.from(alertUrlTranslations!.map((x) => x.toJson()))
+        : null,
     _alertEffect: alertEffect?.name,
     _alertCause: alertCause?.name,
     _alertSeverityLevel: alertSeverityLevel?.name,
@@ -195,4 +183,57 @@ class AlertEntity {
     _entities: entities?.map((e) => {_typeName: e}).toList(),
     _sourceAlert: sourceAlert,
   };
+
+  AlertEntity copyWith({
+    String? id,
+    String? alertId,
+    int? alertHash,
+    String? feed,
+    AgencyEntity? agency,
+    RouteEntity? route,
+    TripEntity? trip,
+    StopEntity? stop,
+    List<PatternOtpEntity>? patterns,
+    String? alertHeaderText,
+    List<TranslatedStringEntity>? alertHeaderTextTranslations,
+    String? alertDescriptionText,
+    List<TranslatedStringEntity>? alertDescriptionTextTranslations,
+    String? alertUrl,
+    List<TranslatedStringEntity>? alertUrlTranslations,
+    AlertEffectTypeTrufi? alertEffect,
+    AlertCauseTypeTrufi? alertCause,
+    AlertSeverityLevelTypeTrufi? alertSeverityLevel,
+    double? effectiveStartDate,
+    double? effectiveEndDate,
+    List<String>? entities,
+    String? sourceAlert,
+  }) {
+    return AlertEntity(
+      id: id ?? this.id,
+      alertId: alertId ?? this.alertId,
+      alertHash: alertHash ?? this.alertHash,
+      feed: feed ?? this.feed,
+      agency: agency ?? this.agency,
+      route: route ?? this.route,
+      trip: trip ?? this.trip,
+      stop: stop ?? this.stop,
+      patterns: patterns ?? this.patterns,
+      alertHeaderText: alertHeaderText ?? this.alertHeaderText,
+      alertHeaderTextTranslations:
+          alertHeaderTextTranslations ?? this.alertHeaderTextTranslations,
+      alertDescriptionText: alertDescriptionText ?? this.alertDescriptionText,
+      alertDescriptionTextTranslations:
+          alertDescriptionTextTranslations ??
+          this.alertDescriptionTextTranslations,
+      alertUrl: alertUrl ?? this.alertUrl,
+      alertUrlTranslations: alertUrlTranslations ?? this.alertUrlTranslations,
+      alertEffect: alertEffect ?? this.alertEffect,
+      alertCause: alertCause ?? this.alertCause,
+      alertSeverityLevel: alertSeverityLevel ?? this.alertSeverityLevel,
+      effectiveStartDate: effectiveStartDate ?? this.effectiveStartDate,
+      effectiveEndDate: effectiveEndDate ?? this.effectiveEndDate,
+      entities: entities ?? this.entities,
+      sourceAlert: sourceAlert ?? this.sourceAlert,
+    );
+  }
 }

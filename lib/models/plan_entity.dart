@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:intl/intl.dart';
+import 'package:equatable/equatable.dart';
+import 'package:trufi_core/configuration/config_default/config_default.dart';
+import 'package:trufi_core/localization/app_localization.dart';
 import 'package:trufi_core/models/alert.dart';
 import 'package:trufi_core/models/booking_info.dart';
+import 'package:trufi_core/models/utils/modes_transport_utils.dart';
 import 'package:trufi_core/models/enums/transport_mode.dart';
 import 'package:trufi_core/models/enums/realtime_state.dart';
 import 'package:trufi_core/models/enums/vertex_type.dart';
+import 'package:trufi_core/models/utils/plan_itinerary_leg_utils.dart';
 import 'package:trufi_core/models/vehicle_parking_with_entrance.dart';
 import 'package:trufi_core/models/pickup_booking_info.dart';
 import 'package:trufi_core/models/step_entity.dart';
@@ -13,9 +19,11 @@ import 'package:trufi_core/models/trufi_map_utils.dart';
 import 'package:trufi_core/screens/route_navigation/maps/trufi_map_controller.dart';
 import 'package:trufi_core/widgets/utils.dart';
 import 'package:collection/collection.dart';
+import 'package:trufi_core/models/plan_entity.dart';
 
 
 part 'bike_park_entity.dart';
+part 'modes_transport_entity.dart';
 part 'stop_entity.dart';
 part 'bike_rental_station_entity.dart';
 part 'place_entity.dart';
@@ -77,5 +85,29 @@ class PlanEntity {
       itineraries: itineraries ?? this.itineraries,
       type: type ?? this.type,
     );
+  }  static void findMinEmissionsPerPerson(
+    List<PlanItinerary> itineraries,
+  ) {
+    // Determine the itinerary with the smallest non-null emissionsPerPerson
+    double? minEmissionsPerPerson;
+    for (var i = 0; i < itineraries.length; i++) {
+      final itinerary = itineraries[i];
+      if (itinerary.emissionsPerPerson != null) {
+        if (minEmissionsPerPerson == null ||
+            (itinerary.emissionsPerPerson! < minEmissionsPerPerson)) {
+          minEmissionsPerPerson = itinerary.emissionsPerPerson;
+        }
+      }
+      // itineraries[i] = itinerary.copyWith(isMinorEmissionsPerPerson: false);
+    }
+
+    for (var i = 0; i < itineraries.length; i++) {
+      final itinerary = itineraries[i];
+      if (itinerary.emissionsPerPerson == minEmissionsPerPerson) {
+        // itineraries[i] = itinerary.copyWith(
+        //     isMinorEmissionsPerPerson:
+        //         itinerary.emissionsPerPerson == minEmissionsPerPerson);
+      }
+    }
   }
 }

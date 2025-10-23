@@ -46,42 +46,33 @@ class PlaceEntity {
       vertexType: getVertexTypeByString(map[_vertexType]),
       lat: map[_lat],
       lon: map[_lon],
-      arrivalTime:
-          map[_arrivalTime] != null
-              ? DateTime.fromMillisecondsSinceEpoch((map[_arrivalTime]))
-              : null,
-      departureTime:
-          map[_departureTime] != null
-              ? DateTime.fromMillisecondsSinceEpoch((map[_departureTime]))
-              : null,
-      stopEntity:
-          map[_stopEntity] != null
-              ? StopEntity.fromJson(map[_stopEntity] as Map<String, dynamic>)
-              : null,
-      bikeRentalStation:
-          map[_bikeRentalStation] != null
-              ? BikeRentalStationEntity.fromJson(
-                map[_bikeRentalStation] as Map<String, dynamic>,
-              )
-              : null,
-      bikeParkEntity:
-          map[_bikeParkEntity] != null
-              ? BikeParkEntity.fromJson(
-                map[_bikeParkEntity] as Map<String, dynamic>,
-              )
-              : null,
-      carParkEntity:
-          map[_carParkEntity] != null
-              ? CarParkEntity.fromJson(
-                map[_carParkEntity] as Map<String, dynamic>,
-              )
-              : null,
-      vehicleParkingWithEntrance:
-          map[_vehicleParkingWithEntrance] != null
-              ? VehicleParkingWithEntranceEntity.fromMap(
-                map[_vehicleParkingWithEntrance] as Map<String, dynamic>,
-              )
-              : null,
+      arrivalTime: map[_arrivalTime] != null
+          ? DateTime.fromMillisecondsSinceEpoch((map[_arrivalTime]))
+          : null,
+      departureTime: map[_departureTime] != null
+          ? DateTime.fromMillisecondsSinceEpoch((map[_departureTime]))
+          : null,
+      stopEntity: map[_stopEntity] != null
+          ? StopEntity.fromJson(map[_stopEntity] as Map<String, dynamic>)
+          : null,
+      bikeRentalStation: map[_bikeRentalStation] != null
+          ? BikeRentalStationEntity.fromJson(
+              map[_bikeRentalStation] as Map<String, dynamic>,
+            )
+          : null,
+      bikeParkEntity: map[_bikeParkEntity] != null
+          ? BikeParkEntity.fromJson(
+              map[_bikeParkEntity] as Map<String, dynamic>,
+            )
+          : null,
+      carParkEntity: map[_carParkEntity] != null
+          ? CarParkEntity.fromJson(map[_carParkEntity] as Map<String, dynamic>)
+          : null,
+      vehicleParkingWithEntrance: map[_vehicleParkingWithEntrance] != null
+          ? VehicleParkingWithEntranceEntity.fromMap(
+              map[_vehicleParkingWithEntrance] as Map<String, dynamic>,
+            )
+          : null,
     );
   }
 
@@ -99,5 +90,50 @@ class PlaceEntity {
       _carParkEntity: carParkEntity?.toJson(),
       _vehicleParkingWithEntrance: vehicleParkingWithEntrance?.toMap(),
     };
+  }
+
+  Map<String, dynamic> toMapForFares() {
+    return {
+      _name: name,
+      _vertexType: vertexType.name,
+      _lat: lat,
+      _lon: lon,
+      _arrivalTime: arrivalTime?.millisecondsSinceEpoch,
+      _departureTime: departureTime?.millisecondsSinceEpoch,
+      _stopEntity: stopEntity?.toMapForFares(),
+      _bikeRentalStation: bikeRentalStation?.toJson(),
+      _bikeParkEntity: bikeParkEntity?.toJson(),
+      _carParkEntity: carParkEntity?.toJson(),
+      _vehicleParkingWithEntrance: vehicleParkingWithEntrance?.toMap(),
+    };
+  }
+
+  PlaceEntity copyWith({
+    String? name,
+    VertexTypeTrufi? vertexType,
+    double? lat,
+    double? lon,
+    DateTime? arrivalTime,
+    DateTime? departureTime,
+    StopEntity? stopEntity,
+    BikeRentalStationEntity? bikeRentalStation,
+    BikeParkEntity? bikeParkEntity,
+    CarParkEntity? carParkEntity,
+    VehicleParkingWithEntranceEntity? vehicleParkingWithEntrance,
+  }) {
+    return PlaceEntity(
+      name: name ?? this.name,
+      vertexType: vertexType ?? this.vertexType,
+      lat: lat ?? this.lat,
+      lon: lon ?? this.lon,
+      arrivalTime: arrivalTime ?? this.arrivalTime,
+      departureTime: departureTime ?? this.departureTime,
+      stopEntity: stopEntity ?? this.stopEntity,
+      bikeRentalStation: bikeRentalStation ?? this.bikeRentalStation,
+      bikeParkEntity: bikeParkEntity ?? this.bikeParkEntity,
+      carParkEntity: carParkEntity ?? this.carParkEntity,
+      vehicleParkingWithEntrance:
+          vehicleParkingWithEntrance ?? this.vehicleParkingWithEntrance,
+    );
   }
 }

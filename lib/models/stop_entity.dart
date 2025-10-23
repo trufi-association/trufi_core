@@ -47,14 +47,13 @@ class StopEntity {
       zoneId: map[_zoneId],
       platformCode: map[_platformCode],
       vehicleMode: getTransportMode(mode: map[_vehicleMode]),
-      alerts:
-          map[_alerts] != null
-              ? List<AlertEntity>.from(
-                (map[_alerts] as List<dynamic>).map(
-                  (x) => AlertEntity.fromJson(x as Map<String, dynamic>),
-                ),
-              )
-              : null,
+      alerts: map[_alerts] != null
+          ? List<AlertEntity>.from(
+              (map[_alerts] as List<dynamic>).map(
+                (x) => AlertEntity.fromJson(x as Map<String, dynamic>),
+              ),
+            )
+          : null,
     );
   }
   Map<String, dynamic> toJson() {
@@ -68,10 +67,25 @@ class StopEntity {
       _platformCode: platformCode,
       _zoneId: zoneId,
       _id: id,
-      _alerts:
-          alerts != null
-              ? List<dynamic>.from(alerts!.map((x) => x.toJson()))
-              : null,
+      _alerts: alerts != null
+          ? List<dynamic>.from(alerts!.map((x) => x.toJson()))
+          : null,
+    };
+  }
+
+  Map<String, dynamic> toMapForFares() {
+    return {
+      _gtfsId: gtfsId,
+      _lat: lat,
+      _lon: lon,
+      _code: code,
+      _vehicleMode: vehicleMode?.name,
+      _platformCode: platformCode,
+      _zoneId: zoneId,
+      _id: id,
+      _alerts: alerts != null
+          ? List<dynamic>.from(alerts!.map((x) => x.toJson()))
+          : null,
     };
   }
 }
