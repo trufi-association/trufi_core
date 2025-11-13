@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart' as latlng;
 import 'package:trufi_core/consts.dart';
 import 'package:trufi_core/pages/home/service/i_plan_repository.dart';
-import 'package:trufi_core/pages/home/widgets/menu_button.dart';
 import 'package:trufi_core/pages/home/widgets/routing_map/routing_map_controller.dart';
 import 'package:trufi_core/pages/home/widgets/search_bar/location_search_bar.dart';
 import 'package:trufi_core/pages/home/widgets/travel_bottom_sheet/travel_bottom_sheet.dart';
@@ -251,7 +250,6 @@ class _RouteNavigationScreenState extends State<RouteNavigationScreen> {
                     final destination = routingMapComponent.destination;
                     return Stack(
                       children: [
-                        MenuButton(),
                         widget.routeSearchBuilder(
                           onSaveFrom: (location) async {
                             await routingMapComponent.addOrigin(location);

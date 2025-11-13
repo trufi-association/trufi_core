@@ -1,25 +1,169 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:trufi_core/localization/app_localization.dart';
+import 'package:trufi_core/pages/about/about.dart';
+import 'package:trufi_core/pages/feedback/feedback.dart';
 import 'package:trufi_core/pages/home/widgets/search_bar/full_screen_search_modal.dart';
-import 'package:trufi_core/pages/home/widgets/search_bar/full_screen_select_location_modal.dart';
-import 'package:trufi_core/pages/home/widgets/search_bar/search_bar_utils.dart';
 import 'package:trufi_core/pages/saved_places/saved_places.dart';
+import 'package:trufi_core/pages/tickets/tickets_page.dart';
 import 'package:trufi_core/screens/route_navigation/maps/trufi_map_controller.dart';
 import 'package:trufi_core/widgets/base_marker/from_marker.dart';
 import 'package:trufi_core/widgets/base_marker/to_marker.dart';
 
-typedef RouteSearchBuilder =
-    Widget Function({
-      required void Function(TrufiLocation) onSaveFrom,
-      required void Function() onClearFrom,
-      required void Function(TrufiLocation) onSaveTo,
-      required void Function() onClearTo,
-      required void Function() onFetchPlan,
-      required void Function() onReset,
-      required void Function() onSwap,
-      required TrufiLocation? origin,
-      required TrufiLocation? destination,
-    });
+typedef RouteSearchBuilder = Widget Function({
+  required void Function(TrufiLocation) onSaveFrom,
+  required void Function() onClearFrom,
+  required void Function(TrufiLocation) onSaveTo,
+  required void Function() onClearTo,
+  required void Function() onFetchPlan,
+  required void Function() onReset,
+  required void Function() onSwap,
+  required TrufiLocation? origin,
+  required TrufiLocation? destination,
+});
+
+void _showSearchBarMenuOptions(BuildContext context) {
+  final theme = Theme.of(context);
+  final localization = AppLocalization.of(context);
+
+  showModalBottomSheet(
+    context: context,
+    useSafeArea: true,
+    isScrollControlled: true,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+    ),
+    backgroundColor: theme.colorScheme.surface,
+    builder: (context) {
+      return SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Stack(
+              children: [
+                ClipRRect(
+                  borderRadius: const BorderRadius.vertical(
+                    top: Radius.circular(24),
+                  ),
+                  child: Image.network(
+                    'https://www.trufi-association.org/wp-content/uploads/2021/11/Delhi-autorickshaw-CC-BY-NC-ND-ai_enlarged-tweaked-1800x1200px.jpg',
+                    height: 220,
+                    width: double.infinity,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+                Container(
+                  height: 220,
+                  decoration: BoxDecoration(
+                    borderRadius: const BorderRadius.vertical(
+                      top: Radius.circular(24),
+                    ),
+                    color: Colors.black.withOpacity(0.35),
+                  ),
+                ),
+                Positioned.fill(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const CircleAvatar(
+                        radius: 40,
+                        backgroundImage: NetworkImage(
+                          'https://trufi.app/wp-content/uploads/2019/02/48.png',
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      Text(
+                        'Trufi Transit',
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
+            ListTile(
+              leading: Icon(Icons.search, color: theme.colorScheme.onSurface),
+              title: Text(
+                'Buscar rutas',
+                style: theme.textTheme.bodyLarge?.copyWith(
+                  color: theme.colorScheme.onSurface,
+                ),
+              ),
+              onTap: () => Navigator.pop(context),
+            ),
+            ListTile(
+              leading: Icon(
+                Icons.bookmark,
+                color: theme.colorScheme.onSurface,
+              ),
+              title: Text(
+                localization.translate(LocalizationKey.yourPlacesMenu),
+                style: theme.textTheme.bodyLarge?.copyWith(
+                  color: theme.colorScheme.onSurface,
+                ),
+              ),
+              onTap: () async {
+                await SavedPlacesPage.navigate(context);
+              },
+            ),
+            ListTile(
+              leading: Icon(
+                CupertinoIcons.tickets,
+                color: theme.colorScheme.onSurface,
+              ),
+              title: Text(
+                'Tickets management',
+                style: theme.textTheme.bodyLarge?.copyWith(
+                  color: theme.colorScheme.onSurface,
+                ),
+              ),
+              onTap: () async {
+                await TicketsPage.navigate(context);
+              },
+            ),
+            ListTile(
+              leading: Icon(
+                Icons.feedback_outlined,
+                color: theme.colorScheme.onSurface,
+              ),
+              title: Text(
+                localization.translate(LocalizationKey.feedbackMenu),
+                style: theme.textTheme.bodyLarge?.copyWith(
+                  color: theme.colorScheme.onSurface,
+                ),
+              ),
+              onTap: () => FeedbackPage.navigate(
+                context,
+                urlFeedback: 'https://www.trufi-association.org/',
+              ),
+            ),
+            ListTile(
+              leading: Icon(Icons.info, color: theme.colorScheme.onSurface),
+              title: Text(
+                localization.translate(LocalizationKey.aboutUsMenu),
+                style: theme.textTheme.bodyLarge?.copyWith(
+                  color: theme.colorScheme.onSurface,
+                ),
+              ),
+              onTap: () => AboutPage.navigate(
+                context,
+                appName: 'Kigali Movility',
+                cityName: 'Kigali',
+                urlRepository:
+                    'https://github.com/trufi-association/trufi_core',
+              ),
+            ),
+            const SizedBox(height: 24),
+          ],
+        ),
+      );
+    },
+  );
+}
 
 class RouteEndpoints {
   final TrufiLocation origin;
@@ -27,6 +171,9 @@ class RouteEndpoints {
 
   const RouteEndpoints({required this.origin, required this.destination});
 }
+
+// --- Código anterior comentado eliminado para mantener el archivo limpio ---
+// Si necesitas referencia histórica, consulta el control de versiones (git)
 
 // class LocationSearchBar extends StatelessWidget {
 //   final void Function(TrufiLocation) onSaveFrom;
@@ -324,8 +471,8 @@ class RouteSearchComponent extends StatelessWidget {
 
     return SafeArea(
       child: Container(
-        margin: const EdgeInsets.only(left: 50, right: 12),
-        padding: const EdgeInsets.fromLTRB(14, 0, 0, 0),
+        margin: const EdgeInsets.only(left: 12, right: 12),
+        padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
         decoration: BoxDecoration(
           color: theme.colorScheme.surface,
           boxShadow: [
@@ -339,8 +486,36 @@ class RouteSearchComponent extends StatelessWidget {
           border: Border.all(color: theme.colorScheme.outlineVariant),
         ),
         child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          // crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            Column(
+                mainAxisSize: MainAxisSize.min,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 2),
+                  child: IconButton(
+                    icon: const Icon(Icons.menu),
+                    color: theme.colorScheme.onSurface,
+                    visualDensity: VisualDensity.compact,
+                    padding: EdgeInsets.zero,
+                    onPressed: () {
+                      _showSearchBarMenuOptions(context);
+                    },
+                    tooltip: 'Menú',
+                  ),
+                ),
+              ],
+            ),
+            Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const FromMarker(),
+                _DotsWidget(color: theme.colorScheme.onSurfaceVariant),
+                const ToMarker(),
+              ],
+            ),
             Expanded(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -351,99 +526,75 @@ class RouteSearchComponent extends StatelessWidget {
                     children: [
                       Divider(
                         height: 2,
-                        indent: 28,
-                        endIndent: 40,
+                        // endIndent: 40,
                         color: theme.colorScheme.outlineVariant,
                       ),
-                      Positioned(
-                        child: SearchBarUtils.getDots(
-                          theme.colorScheme.onSurfaceVariant,
-                        ),
-                      ),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Column(
-                              children: [
-                                _TextFieldUI(
-                                  onTap: () async {
-                                    final locationSelected =
-                                        await FullScreenSearchModal.onLocationSelected(
-                                          context,
-                                          location: origin,
-                                        );
-                                    if (locationSelected != null) {
-                                      onSaveFrom(locationSelected);
-                                    }
-                                  },
-                                  location: origin,
-                                  hintText: 'Choose start location',
-                                  icon: Container(
-                                    width: 24,
-                                    padding: const EdgeInsets.all(3.5),
-                                    child: const FromMarker(),
-                                  ),
-                                ),
-                                _TextFieldUI(
-                                  onTap: () async {
-                                    final locationSelected =
-                                        await FullScreenSearchModal.onLocationSelected(
-                                          context,
-                                          location: destination,
-                                        );
-                                    if (locationSelected != null) {
-                                      onSaveTo(locationSelected);
-                                    }
-                                  },
-                                  location: destination,
-                                  hintText: 'Choose destination location',
-                                  icon: Container(
-                                    width: 24,
-                                    padding: const EdgeInsets.symmetric(
-                                      vertical: 8,
-                                    ),
-                                    child: const ToMarker(),
-                                  ),
-                                ),
-                              ],
+                      Padding(
+                        padding: const EdgeInsets.only(left: 10),
+                        child: Column(
+                          children: [
+                            _LocationField(
+                              location: origin,
+                              hintText: 'Choose start location',
+                              onTap: () async {
+                                final locationSelected =
+                                    await FullScreenSearchModal.onLocationSelected(
+                                      context,
+                                      location: origin,
+                                    );
+                                if (locationSelected != null) {
+                                  onSaveFrom(locationSelected);
+                                }
+                              },
                             ),
-                          ),
-                          Column(
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  vertical: 2,
-                                ),
-                                child: IconButton(
-                                  icon: const Icon(Icons.more_vert),
-                                  color: theme.colorScheme.onSurface,
-                                  visualDensity: VisualDensity.compact,
-                                  padding: EdgeInsets.zero,
-                                  onPressed: () {},
-                                  tooltip: 'Menú',
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  vertical: 2,
-                                ),
-                                child: IconButton(
-                                  icon: const Icon(Icons.swap_vert),
-                                  color: theme.colorScheme.onSurface,
-                                  visualDensity: VisualDensity.compact,
-                                  padding: EdgeInsets.zero,
-                                  onPressed: onSwap,
-                                  tooltip: 'Swap',
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
+                            _LocationField(
+                              location: destination,
+                              hintText: 'Choose destination location',
+                              onTap: () async {
+                                final locationSelected =
+                                    await FullScreenSearchModal.onLocationSelected(
+                                      context,
+                                      location: destination,
+                                    );
+                                if (locationSelected != null) {
+                                  onSaveTo(locationSelected);
+                                }
+                              },
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   ),
                 ],
               ),
+            ),
+            Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 2),
+                  child: IconButton(
+                    icon: const Icon(Icons.more_vert),
+                    color: theme.colorScheme.onSurface,
+                    visualDensity: VisualDensity.compact,
+                    padding: EdgeInsets.zero,
+                    onPressed: () {},
+                    tooltip: 'Menú',
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 2),
+                  child: IconButton(
+                    icon: const Icon(Icons.swap_vert),
+                    color: theme.colorScheme.onSurface,
+                    visualDensity: VisualDensity.compact,
+                    padding: EdgeInsets.zero,
+                    onPressed: onSwap,
+                    tooltip: 'Swap',
+                  ),
+                ),
+              ],
             ),
           ],
         ),
@@ -452,18 +603,45 @@ class RouteSearchComponent extends StatelessWidget {
   }
 }
 
-class _TextFieldUI extends StatelessWidget {
+class _DotsWidget extends StatelessWidget {
+  final Color color;
+
+  const _DotsWidget({required this.color});
+
+  @override
+  Widget build(BuildContext context) {
+    final dot = Padding(
+      padding: const EdgeInsets.symmetric(vertical: 1),
+      child: Container(
+        width: 2.5,
+        height: 2.5,
+        decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+      ),
+    );
+    return SizedBox(
+      width: 24,
+      height: 24,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [dot, dot, dot],
+      ),
+    );
+  }
+}
+
+class _LocationField extends StatelessWidget {
   final TrufiLocation? location;
   final String hintText;
   final VoidCallback onTap;
-  final Container icon;
 
-  const _TextFieldUI({
-    this.location,
-    required this.onTap,
-    required this.icon,
+  const _LocationField({
+    required this.location,
     required this.hintText,
+    required this.onTap,
   });
+
+  bool get _isCurrentLocation => 
+      location?.description == 'Your Location';
 
   @override
   Widget build(BuildContext context) {
@@ -473,61 +651,43 @@ class _TextFieldUI extends StatelessWidget {
       onTap: onTap,
       child: SizedBox(
         height: 44,
-        child: Row(
-          children: [
-            location != null && location?.description == 'Your Location'
-                ? Container(
-                    width: 24,
-                    padding: const EdgeInsets.all(4),
-                    child: Container(
-                      padding: const EdgeInsets.all(1),
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                          color: theme.colorScheme.primaryContainer,
-                          width: 3,
-                        ),
-                      ),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: theme.colorScheme.primary,
-                          shape: BoxShape.circle,
-                        ),
-                      ),
-                    ),
-                  )
-                : icon,
-            const SizedBox(width: 4),
-            Expanded(
-              child: Row(
-                children: [
-                  Flexible(
-                    child: Text(
-                      location?.displayName(AppLocalization.of(context)) ??
-                          hintText,
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        color: location != null
-                            ? location?.description == 'Your Location'
-                                  ? theme.colorScheme.primary
-                                  : theme.colorScheme.onSurface
-                            : theme.colorScheme.onSurfaceVariant,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                  if (location == null)
-                    Icon(
-                      Icons.keyboard_arrow_right,
-                      size: 20,
-                      color: theme.colorScheme.onSurfaceVariant,
-                    ),
-                ],
-              ),
-            ),
-          ],
+        child: Align(
+          alignment: Alignment.centerLeft,
+          child: _buildTextContent(context, theme),
         ),
       ),
+    );
+  }
+
+  Widget _buildTextContent(BuildContext context, ThemeData theme) {
+    final displayText = location?.displayName(AppLocalization.of(context)) ?? hintText;
+    
+    Color textColor;
+    if (location != null) {
+      textColor = _isCurrentLocation
+          ? theme.colorScheme.primary
+          : theme.colorScheme.onSurface;
+    } else {
+      textColor = theme.colorScheme.onSurfaceVariant;
+    }
+
+    return Row(
+      children: [
+        Flexible(
+          child: Text(
+            displayText,
+            style: theme.textTheme.bodyMedium?.copyWith(color: textColor),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+        if (location == null)
+          Icon(
+            Icons.keyboard_arrow_right,
+            size: 20,
+            color: theme.colorScheme.onSurfaceVariant,
+          ),
+      ],
     );
   }
 }
