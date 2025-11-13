@@ -10,35 +10,16 @@ class FromMarker extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       height: height,
-      child: FittedBox(
-        child: Stack(
-          alignment: AlignmentDirectional.center,
-          children: [
-            Container(
-              width: 6,
-              height: 6,
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                shape: BoxShape.circle,
-              ),
-            ),
-            Container(
-              width: 5.2,
-              height: 5.2,
-              decoration: BoxDecoration(
-                color: const Color(0xffd81b60),
-                shape: BoxShape.circle,
-              ),
-            ),
-            Container(
-              width: 3,
-              height: 3,
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                shape: BoxShape.circle,
-              ),
-            ),
-          ],
+      width: height,
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.green.withOpacity(0.15),
+          borderRadius: BorderRadius.circular(6),
+        ),
+        child: const Icon(
+          Icons.my_location,
+          color: Colors.green,
+          size: 16,
         ),
       ),
     );

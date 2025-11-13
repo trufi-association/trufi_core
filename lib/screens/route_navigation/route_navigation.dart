@@ -15,6 +15,7 @@ import 'package:trufi_core/screens/route_navigation/maps/trufi_map_controller.da
 import 'package:trufi_core/screens/route_navigation/maps/maplibre_gl.dart';
 import 'package:trufi_core/widgets/app_lifecycle_reactor.dart';
 import 'package:trufi_core/widgets/bottom_sheet/trufi_bottom_sheet.dart';
+import 'package:trufi_core/widgets/bottom_sheet/location_selector_bottom_sheet.dart';
 
 class RouteNavigationScreen extends StatefulWidget {
   const RouteNavigationScreen({
@@ -156,27 +157,35 @@ class _RouteNavigationScreenState extends State<RouteNavigationScreen> {
         });
       },
       (coord) async {
-        if (routingMapComponent.destination == null) {
-          await routingMapComponent.addDestination(
-            TrufiLocation(description: '', position: coord),
-          );
-          if (routingMapComponent.origin == null) {
-            final currentLocation = GPSLocationProvider().current;
-            if (currentLocation != null) {
-              await routingMapComponent.addOrigin(
-                TrufiLocation(
-                  description: 'Your Location',
-                  position: currentLocation,
-                ),
-              );
+        // Show bottom sheet with options to set as origin or destination
+        await LocationSelectorBottomSheet.show(
+          context,
+          selectedLocation: coord,
+          onSetAsOrigin: () async {
+            await routingMapComponent.addOrigin(
+              TrufiLocation(description: '', position: coord),
+            );
+            await _fetchPlanWithLoading();
+          },
+          onSetAsDestination: () async {
+            await routingMapComponent.addDestination(
+              TrufiLocation(description: '', position: coord),
+            );
+            // Auto-set origin to current location if not set
+            if (routingMapComponent.origin == null) {
+              final currentLocation = GPSLocationProvider().current;
+              if (currentLocation != null) {
+                await routingMapComponent.addOrigin(
+                  TrufiLocation(
+                    description: 'Your Location',
+                    position: currentLocation,
+                  ),
+                );
+              }
             }
-          }
-        } else if (routingMapComponent.origin == null) {
-          await routingMapComponent.addOrigin(
-            TrufiLocation(description: '', position: coord),
-          );
-        }
-        await _fetchPlanWithLoading();
+            await _fetchPlanWithLoading();
+          },
+        );
       },
     );
 
