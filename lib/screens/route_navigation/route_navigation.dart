@@ -227,8 +227,7 @@ class _RouteNavigationScreenState extends State<RouteNavigationScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: AppLifecycleReactor(
+    return AppLifecycleReactor(
         child: LayoutBuilder(
           builder: (context, constraints) {
             final logicalSize = Size(
@@ -379,8 +378,7 @@ class _RouteNavigationScreenState extends State<RouteNavigationScreen> {
             );
           },
         ),
-      ),
-    );
+      );
   }
 }
 

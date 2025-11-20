@@ -11,26 +11,26 @@ abstract class ItineraryLegUtils {
       double roundMeters = (tempMeters / 10).round() * 10;
 
       return localization.translateWithParams(
-        '${LocalizationKey.instructionDistanceMeters.key}:${_formatOneDecimals(localeName: localization.locale.countryCode).format(roundMeters > 0 ? roundMeters : 1)}',
+        '${LocalizationKey.instructionDistanceMeters.key}:${_formatOneDecimals(localeName: localization.locale.languageCode).format(roundMeters > 0 ? roundMeters : 1)}',
       );
     }
     if (tempMeters < 975) {
       return localization.translateWithParams(
-        '${LocalizationKey.instructionDistanceMeters.key}:${_formatOneDecimals(localeName: localization.locale.countryCode).format((tempMeters / 50).round() * 50)}',
+        '${LocalizationKey.instructionDistanceMeters.key}:${_formatOneDecimals(localeName: localization.locale.languageCode).format((tempMeters / 50).round() * 50)}',
       );
     }
     if (tempMeters < 10000) {
       return localization.translateWithParams(
-        '${LocalizationKey.instructionDistanceKm.key}:${_formatOneDecimals(localeName: localization.locale.countryCode).format(((tempMeters / 100).round() * 100) / 1000)}',
+        '${LocalizationKey.instructionDistanceKm.key}:${_formatOneDecimals(localeName: localization.locale.languageCode).format(((tempMeters / 100).round() * 100) / 1000)}',
       );
     }
     if (tempMeters < 100000) {
       return localization.translateWithParams(
-        '${LocalizationKey.instructionDistanceKm.key}:${_formatOneDecimals(localeName: localization.locale.countryCode).format((tempMeters / 1000).round())}',
+        '${LocalizationKey.instructionDistanceKm.key}:${_formatOneDecimals(localeName: localization.locale.languageCode).format((tempMeters / 1000).round())}',
       );
     }
     return localization.translateWithParams(
-      '${LocalizationKey.instructionDistanceKm.key}:${_formatOneDecimals(localeName: localization.locale.countryCode).format((tempMeters / 1000).round() * 10)}',
+      '${LocalizationKey.instructionDistanceKm.key}:${_formatOneDecimals(localeName: localization.locale.languageCode).format((tempMeters / 1000).round() * 10)}',
     );
   }
 

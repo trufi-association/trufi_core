@@ -7,13 +7,7 @@ import 'package:trufi_core/screens/route_navigation/maps/trufi_map_controller.da
 import 'package:trufi_core/widgets/maps/choose_location/choose_location.dart';
 
 class SavedPlacesPage extends StatefulWidget {
-  static const String route = '/Places';
-
-  static Future<void> navigate(BuildContext context) async {
-    await Navigator.of(
-      context,
-    ).push(MaterialPageRoute(builder: (context) => const SavedPlacesPage()));
-  }
+  static const String route = '/saved-places';
 
   const SavedPlacesPage({super.key});
 

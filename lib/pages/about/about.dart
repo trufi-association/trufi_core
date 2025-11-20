@@ -5,24 +5,7 @@ import 'package:trufi_core/utils/packge_info_platform.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class AboutPage extends StatelessWidget {
-  static const String route = "/About";
-
-  static Future<void> navigate(
-    BuildContext context, {
-    required String appName,
-    required String cityName,
-    required String urlRepository,
-  }) async {
-    await Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => AboutPage(
-          appName: appName,
-          cityName: cityName,
-          urlRepository: urlRepository,
-        ),
-      ),
-    );
-  }
+  static const String route = "/about";
 
   const AboutPage({
     super.key,

@@ -1,11 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:trufi_core/localization/app_localization.dart';
-import 'package:trufi_core/pages/about/about.dart';
-import 'package:trufi_core/pages/feedback/feedback.dart';
 import 'package:trufi_core/pages/home/widgets/search_bar/full_screen_search_modal.dart';
-import 'package:trufi_core/pages/saved_places/saved_places.dart';
-import 'package:trufi_core/pages/tickets/tickets_page.dart';
 import 'package:trufi_core/screens/route_navigation/maps/trufi_map_controller.dart';
 import 'package:trufi_core/widgets/base_marker/from_marker.dart';
 import 'package:trufi_core/widgets/base_marker/to_marker.dart';
@@ -106,8 +103,9 @@ void _showSearchBarMenuOptions(BuildContext context) {
                   color: theme.colorScheme.onSurface,
                 ),
               ),
-              onTap: () async {
-                await SavedPlacesPage.navigate(context);
+              onTap: () {
+                Navigator.pop(context);
+                context.push('/saved-places');
               },
             ),
             ListTile(
@@ -116,13 +114,14 @@ void _showSearchBarMenuOptions(BuildContext context) {
                 color: theme.colorScheme.onSurface,
               ),
               title: Text(
-                'Tickets management',
+                'Tickets',
                 style: theme.textTheme.bodyLarge?.copyWith(
                   color: theme.colorScheme.onSurface,
                 ),
               ),
-              onTap: () async {
-                await TicketsPage.navigate(context);
+              onTap: () {
+                Navigator.pop(context);
+                context.push('/tickets');
               },
             ),
             ListTile(
@@ -136,10 +135,10 @@ void _showSearchBarMenuOptions(BuildContext context) {
                   color: theme.colorScheme.onSurface,
                 ),
               ),
-              onTap: () => FeedbackPage.navigate(
-                context,
-                urlFeedback: 'https://www.trufi-association.org/',
-              ),
+              onTap: () {
+                Navigator.pop(context);
+                context.push('/feedback');
+              },
             ),
             ListTile(
               leading: Icon(Icons.info, color: theme.colorScheme.onSurface),
@@ -149,13 +148,10 @@ void _showSearchBarMenuOptions(BuildContext context) {
                   color: theme.colorScheme.onSurface,
                 ),
               ),
-              onTap: () => AboutPage.navigate(
-                context,
-                appName: 'Kigali Movility',
-                cityName: 'Kigali',
-                urlRepository:
-                    'https://github.com/trufi-association/trufi_core',
-              ),
+              onTap: () {
+                Navigator.pop(context);
+                context.push('/about');
+              },
             ),
             const SizedBox(height: 24),
           ],
