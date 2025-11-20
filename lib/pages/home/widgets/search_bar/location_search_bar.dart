@@ -1,6 +1,4 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:trufi_core/localization/app_localization.dart';
 import 'package:trufi_core/pages/home/widgets/search_bar/full_screen_search_modal.dart';
 import 'package:trufi_core/screens/route_navigation/maps/trufi_map_controller.dart';
@@ -18,148 +16,6 @@ typedef RouteSearchBuilder = Widget Function({
   required TrufiLocation? origin,
   required TrufiLocation? destination,
 });
-
-void _showSearchBarMenuOptions(BuildContext context) {
-  final theme = Theme.of(context);
-  final localization = AppLocalization.of(context);
-
-  showModalBottomSheet(
-    context: context,
-    useSafeArea: true,
-    isScrollControlled: true,
-    shape: const RoundedRectangleBorder(
-      borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-    ),
-    backgroundColor: theme.colorScheme.surface,
-    builder: (context) {
-      return SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Stack(
-              children: [
-                ClipRRect(
-                  borderRadius: const BorderRadius.vertical(
-                    top: Radius.circular(24),
-                  ),
-                  child: Image.network(
-                    'https://www.trufi-association.org/wp-content/uploads/2021/11/Delhi-autorickshaw-CC-BY-NC-ND-ai_enlarged-tweaked-1800x1200px.jpg',
-                    height: 220,
-                    width: double.infinity,
-                    fit: BoxFit.cover,
-                  ),
-                ),
-                Container(
-                  height: 220,
-                  decoration: BoxDecoration(
-                    borderRadius: const BorderRadius.vertical(
-                      top: Radius.circular(24),
-                    ),
-                    color: Colors.black.withOpacity(0.35),
-                  ),
-                ),
-                Positioned.fill(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const CircleAvatar(
-                        radius: 40,
-                        backgroundImage: NetworkImage(
-                          'https://trufi.app/wp-content/uploads/2019/02/48.png',
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-                      Text(
-                        'Trufi Transit',
-                        style: theme.textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 20),
-            ListTile(
-              leading: Icon(Icons.search, color: theme.colorScheme.onSurface),
-              title: Text(
-                'Buscar rutas',
-                style: theme.textTheme.bodyLarge?.copyWith(
-                  color: theme.colorScheme.onSurface,
-                ),
-              ),
-              onTap: () => Navigator.pop(context),
-            ),
-            ListTile(
-              leading: Icon(
-                Icons.bookmark,
-                color: theme.colorScheme.onSurface,
-              ),
-              title: Text(
-                localization.translate(LocalizationKey.yourPlacesMenu),
-                style: theme.textTheme.bodyLarge?.copyWith(
-                  color: theme.colorScheme.onSurface,
-                ),
-              ),
-              onTap: () {
-                Navigator.pop(context);
-                context.push('/saved-places');
-              },
-            ),
-            ListTile(
-              leading: Icon(
-                CupertinoIcons.tickets,
-                color: theme.colorScheme.onSurface,
-              ),
-              title: Text(
-                'Tickets',
-                style: theme.textTheme.bodyLarge?.copyWith(
-                  color: theme.colorScheme.onSurface,
-                ),
-              ),
-              onTap: () {
-                Navigator.pop(context);
-                context.push('/tickets');
-              },
-            ),
-            ListTile(
-              leading: Icon(
-                Icons.feedback_outlined,
-                color: theme.colorScheme.onSurface,
-              ),
-              title: Text(
-                localization.translate(LocalizationKey.feedbackMenu),
-                style: theme.textTheme.bodyLarge?.copyWith(
-                  color: theme.colorScheme.onSurface,
-                ),
-              ),
-              onTap: () {
-                Navigator.pop(context);
-                context.push('/feedback');
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.info, color: theme.colorScheme.onSurface),
-              title: Text(
-                localization.translate(LocalizationKey.aboutUsMenu),
-                style: theme.textTheme.bodyLarge?.copyWith(
-                  color: theme.colorScheme.onSurface,
-                ),
-              ),
-              onTap: () {
-                Navigator.pop(context);
-                context.push('/about');
-              },
-            ),
-            const SizedBox(height: 24),
-          ],
-        ),
-      );
-    },
-  );
-}
 
 class RouteEndpoints {
   final TrufiLocation origin;
@@ -496,7 +352,7 @@ class RouteSearchComponent extends StatelessWidget {
                     visualDensity: VisualDensity.compact,
                     padding: EdgeInsets.zero,
                     onPressed: () {
-                      _showSearchBarMenuOptions(context);
+                      Scaffold.of(context).openDrawer();
                     },
                     tooltip: 'Menú',
                   ),

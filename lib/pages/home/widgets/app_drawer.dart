@@ -2,6 +2,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:trufi_core/localization/app_localization.dart';
+import 'package:trufi_core/pages/about/about.dart';
+import 'package:trufi_core/pages/feedback/feedback.dart';
+import 'package:trufi_core/pages/saved_places/saved_places.dart';
+import 'package:trufi_core/pages/tickets/tickets_page.dart';
 
 /// Default app drawer with navigation menu for Trufi apps
 class AppDrawer extends StatelessWidget {
@@ -91,7 +95,7 @@ class AppDrawer extends StatelessWidget {
             ),
             onTap: () {
               Navigator.pop(context); // Close drawer
-              context.push('/saved-places');
+              context.push(SavedPlacesPage.route);
             },
           ),
           if (showTickets)
@@ -108,7 +112,7 @@ class AppDrawer extends StatelessWidget {
               ),
               onTap: () {
                 Navigator.pop(context);
-                context.push('/tickets');
+                context.push(TicketsPage.route);
               },
             ),
           if (additionalMenuItems != null) ...additionalMenuItems!,
@@ -127,7 +131,7 @@ class AppDrawer extends StatelessWidget {
             onTap: () {
               Navigator.pop(context); // Close drawer
               context.push(
-                '/feedback',
+                FeedbackPage.route,
                 extra: {'urlFeedback': 'https://www.trufi-association.org/'},
               );
             },
@@ -143,7 +147,7 @@ class AppDrawer extends StatelessWidget {
             onTap: () {
               Navigator.pop(context); // Close drawer
               context.push(
-                '/about',
+                AboutPage.route,
                 extra: {
                   'appName': 'Kigali Movility',
                   'cityName': 'Kigali',

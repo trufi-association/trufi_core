@@ -92,7 +92,7 @@ class TrufiApp extends StatelessWidget {
           },
         ),
         GoRoute(
-          path: '/about',
+          path: AboutPage.route,
           name: 'about',
           pageBuilder: (context, state) {
             final extra = state.extra as Map<String, String>?;
@@ -120,7 +120,7 @@ class TrufiApp extends StatelessWidget {
           },
         ),
         GoRoute(
-          path: '/feedback',
+          path: FeedbackPage.route,
           name: 'feedback',
           pageBuilder: (context, state) {
             final extra = state.extra as Map<String, String>?;
@@ -146,7 +146,7 @@ class TrufiApp extends StatelessWidget {
           },
         ),
         GoRoute(
-          path: '/saved-places',
+          path: SavedPlacesPage.route,
           name: 'saved-places',
           pageBuilder: (context, state) {
             return CustomTransitionPage(
@@ -169,7 +169,7 @@ class TrufiApp extends StatelessWidget {
           },
         ),
         GoRoute(
-          path: '/tickets',
+          path: TicketsPage.route,
           name: 'tickets',
           pageBuilder: (context, state) {
             final extra = state.extra as Map<String, String>?;
