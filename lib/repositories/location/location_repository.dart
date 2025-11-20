@@ -8,11 +8,13 @@ import 'package:trufi_core/consts.dart';
 import 'package:trufi_core/repositories/location/interfaces/i_location_search_service.dart';
 import 'package:trufi_core/repositories/location/interfaces/i_location_service.dart';
 import 'package:trufi_core/repositories/location/models/defaults_location.dart';
-import 'package:trufi_core/repositories/location/services/hive_local_service.dart';
+import 'package:trufi_core/repositories/location/services/storage_location_service.dart';
+import 'package:trufi_core/repositories/storage/shared_preferences_storage.dart';
 import 'package:trufi_core/screens/route_navigation/maps/trufi_map_controller.dart';
 
 class LocationRepository {
-  final ILocationService locationService = HiveLocationService();
+  final ILocationService locationService = 
+      StorageLocationService(SharedPreferencesStorage());
 
   final ILocationSearchService locationSearchService =
       ApiConfig().locationSearchService;

@@ -24,7 +24,8 @@ dependencies:
   vector_tile: ^3.0.0
   url_launcher: ^6.3.2
   geolocator: ^14.0.1
-  hive: ^2.2.3
+  shared_preferences: ^2.3.3
+  uuid: ^4.5.1
 
 dev_dependencies:
   flutter_test:

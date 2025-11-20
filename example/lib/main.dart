@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import 'package:trufi_core/localization/app_localization.dart';
 import 'package:trufi_core/localization/language_bloc.dart';
 import 'package:trufi_core/default_theme.dart';
-import 'package:trufi_core/hive_init.dart';
 import 'package:trufi_core/screens/route_navigation/route_navigation.dart';
 import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
@@ -14,7 +13,6 @@ void main() async {
 
   Intl.defaultLocale = appLocale;
   await initializeDateFormatting(appLocale);
-  await initHiveForFlutter();
   runApp(const MyApp());
 }
 

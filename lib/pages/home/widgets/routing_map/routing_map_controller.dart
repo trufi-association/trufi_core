@@ -1,9 +1,10 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 
-import 'package:trufi_core/pages/home/repository/hive_local_repository.dart';
+import 'package:trufi_core/pages/home/repository/local_repository.dart';
+import 'package:trufi_core/pages/home/repository/storage_map_route_repository.dart';
+import 'package:trufi_core/repositories/storage/shared_preferences_storage.dart';
 import 'package:trufi_core/pages/home/service/routing_service/otp_2_7/graphql_plan_data_source.dart';
-import 'package:trufi_core/pages/home/service/routing_service/otp_stadtnavi/graphql_plan_data_source.dart';
 import 'package:trufi_core/pages/home/widgets/routing_map/routing_map_selected.dart';
 import 'package:trufi_core/consts.dart';
 import 'package:trufi_core/models/enums/transport_mode.dart';
@@ -87,8 +88,8 @@ class RoutingMapComponent extends IRoutingMapComponent {
     ),
   );
 
-  final MapRouteHiveLocalRepository mapRouteHiveLocal =
-      MapRouteHiveLocalRepository();
+  final MapRouteLocalRepository mapRouteHiveLocal =
+      StorageMapRouteRepository(SharedPreferencesStorage());
   final IPlanRepository planRepository;
 
   RoutingMapComponent(super.controller, {IPlanRepository? customPlanRepository})

@@ -1,18 +1,16 @@
 import 'package:uuid/uuid.dart';
-import 'package:hive/hive.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 abstract class AppDeviceId {
-  static const String path = "TrufiAppId";
-
-  static String _id = '';
-  static final _box = Hive.box(path);
   static const String _trufiAppIdKey = "trufiAppIdKey";
+  static String _id = '';
 
   static Future<void> initialize() async {
-    String? trufiId = _box.get(_trufiAppIdKey);
+    final prefs = await SharedPreferences.getInstance();
+    String? trufiId = prefs.getString(_trufiAppIdKey);
     if (trufiId == null) {
       _id = const Uuid().v4();
-      _box.put(_trufiAppIdKey, _id);
+      await prefs.setString(_trufiAppIdKey, _id);
     } else {
       _id = trufiId;
     }
