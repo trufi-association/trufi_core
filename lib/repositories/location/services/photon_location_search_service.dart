@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:latlong2/latlong.dart';
 
@@ -27,47 +28,98 @@ class PhotonLocationSearchService implements ILocationSearchService {
     final Uri request = Uri.parse("$photonUrl/api").replace(
       queryParameters: {
         "q": query,
-        "bbox": [29.954,-1.997,30.167,-1.845].join(','),
+        "limit": limit.toString(),
+        "lang": lang,
         ...extraQueryParameters,
       },
     );
-    final response = await _fetchRequest(request);
-    if (response.statusCode != 200) {
-      throw "Not found locations";
-    } else {
-      // location results
+    
+    try {
+      final response = await _fetchRequest(request);
+      if (response.statusCode != 200) {
+        throw Exception("Photon API error: ${response.statusCode}");
+      }
+
       final json = jsonDecode(utf8.decode(response.bodyBytes));
-      final trufiLocationList =
-          List<Map<String, dynamic>>.from(json["features"])
-              .map((e) => LocationSearchResponse.fromJson(e))
-              .map((x) => x.toTrufiLocation())
-              .toList();
+      final features = json["features"] as List?;
+      
+      if (features == null || features.isEmpty) {
+        return [];
+      }
+
+      final trufiLocationList = features
+          .map((e) => LocationSearchResponse.fromJson(e as Map<String, dynamic>))
+          .map((x) => x.toTrufiLocation())
+          .toList();
 
       return trufiLocationList;
+    } catch (e) {
+      // Log error and return empty list instead of throwing
+      debugPrint("Error fetching locations from Photon: $e");
+      return [];
     }
   }
 
   @override
   Future<TrufiLocation> reverseGeodecoding(LatLng location) async {
-    final response = await _fetchRequest(
-      Uri.parse(
-        "$photonUrl/reverse?lon=${location.longitude}&lat=${location.latitude}",
-      ),
-    );
-    final body = jsonDecode(utf8.decode(response.bodyBytes));
-    if (body["type"] == "FeatureCollection") {
-      final features = body["features"] as List;
-      if (features.isNotEmpty) {
-        final feature = features.first;
-        final properties = feature["properties"];
-        return LocationSearchResponse(
-          name: properties["name"],
-          street: properties["street"],
-          latLng: location,
-        ).toTrufiLocation();
+    try {
+      final response = await _fetchRequest(
+        Uri.parse(
+          "$photonUrl/reverse?lon=${location.longitude}&lat=${location.latitude}",
+        ),
+      );
+      
+      if (response.statusCode != 200) {
+        throw Exception("Photon reverse geocoding error: ${response.statusCode}");
       }
+
+      final body = jsonDecode(utf8.decode(response.bodyBytes));
+      
+      if (body["type"] == "FeatureCollection") {
+        final features = body["features"] as List?;
+        if (features != null && features.isNotEmpty) {
+          final feature = features.first;
+          final properties = feature["properties"] as Map<String, dynamic>;
+          final geometry = feature["geometry"];
+          final coords = geometry["coordinates"] as List;
+          
+          // Build a more complete address from available properties
+          final street = properties["street"]?.toString() ?? "";
+          final housenumber = properties["housenumber"]?.toString() ?? "";
+          final locality = properties["locality"]?.toString() ?? "";
+          final county = properties["county"]?.toString() ?? "";
+          
+          final addressParts = <String>[
+            if (street.isNotEmpty) 
+              housenumber.isNotEmpty ? "$street $housenumber" : street,
+            if (locality.isNotEmpty) locality,
+            if (county.isNotEmpty) county,
+          ];
+          
+          return LocationSearchResponse(
+            name: properties["name"]?.toString() ?? "Unknown location",
+            street: addressParts.join(", "),
+            latLng: LatLng(coords[1], coords[0]),
+            type: properties["type"]?.toString(),
+          ).toTrufiLocation();
+        }
+      }
+      
+      // Return a basic location if no data found
+      return TrufiLocation(
+        description: "Selected location",
+        position: location,
+        address: "Lat: ${location.latitude.toStringAsFixed(6)}, Lon: ${location.longitude.toStringAsFixed(6)}",
+      );
+    } catch (e) {
+      debugPrint("Error in reverse geocoding: $e");
+      // Return a basic location on error
+      return TrufiLocation(
+        description: "Selected location",
+        position: location,
+        address: "Lat: ${location.latitude.toStringAsFixed(6)}, Lon: ${location.longitude.toStringAsFixed(6)}",
+      );
     }
-    throw Exception("No data found");
   }
 
   Future<http.Response> _fetchRequest(Uri request) async {

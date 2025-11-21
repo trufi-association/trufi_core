@@ -1,6 +1,7 @@
-import 'package:trufi_core/trufi_core.dart';
 import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:trufi_core/trufi_app.dart';
+import 'package:trufi_core/trufi_initialization.dart';
 
 void main() {
   initializeTrufiApp(
