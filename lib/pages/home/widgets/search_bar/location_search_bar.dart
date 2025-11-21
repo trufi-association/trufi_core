@@ -320,7 +320,7 @@ class RouteSearchComponent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-
+print(origin);
     return SafeArea(
       child: Container(
         margin: const EdgeInsets.only(left: 12, right: 12),

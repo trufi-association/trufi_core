@@ -146,7 +146,7 @@ class _LocationTilerState extends State<LocationTiler> {
     );
     widget.updateLocation(
       widget.location,
-      widget.location.copyWith(type: type),
+      widget.location.copyWith(type: TrufiLocationType.fromString(type)),
     );
   }
 
@@ -161,8 +161,9 @@ class _LocationTilerState extends State<LocationTiler> {
         );
       },
     );
-    if (newLocation != null)
+    if (newLocation != null) {
       widget.updateLocation(widget.location, newLocation);
+    }
   }
 
   Future<void> _changePosition(BuildContext context) async {

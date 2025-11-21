@@ -162,13 +162,21 @@ class _RouteNavigationScreenState extends State<RouteNavigationScreen> {
           selectedLocation: coord,
           onSetAsOrigin: () async {
             await routingMapComponent.addOrigin(
-              TrufiLocation(description: '', position: coord),
+              TrufiLocation(
+                description: '',
+                position: coord,
+                type: TrufiLocationType.selectedOnMap,
+              ),
             );
             await _fetchPlanWithLoading();
           },
           onSetAsDestination: () async {
             await routingMapComponent.addDestination(
-              TrufiLocation(description: '', position: coord),
+              TrufiLocation(
+                description: '',
+                position: coord,
+                type: TrufiLocationType.selectedOnMap,
+              ),
             );
             // Auto-set origin to current location if not set
             if (routingMapComponent.origin == null) {

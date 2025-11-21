@@ -135,7 +135,7 @@ class _SavedPlacesPageState extends State<SavedPlacesPage> {
           description: locationDetail.description,
           address: locationDetail.address,
           position: locationDetail.position,
-          type: 'saved_place:map',
+          type: TrufiLocationType.customPlace,
         ),
       );
     }

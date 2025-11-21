@@ -371,7 +371,7 @@ class _FullScreenSearchModalState extends State<FullScreenSearchModal> {
           description: 'Your Location',
           position: currentPosition,
           address: location.address,
-          type: 'current_location',
+          type: TrufiLocationType.currentLocation,
         );
         
         _setLocation(location: currentLocation);

@@ -25,7 +25,7 @@ extension DefaultLocationExt on DefaultLocationEnum {
       e: TrufiLocation(
         description: _keys[e]!,
         position: const LatLng(0, 0),
-        type: _types[e]!,
+        type: TrufiLocationType.fromString(_types[e]!),
       ),
   };
 
@@ -36,7 +36,7 @@ extension DefaultLocationExt on DefaultLocationEnum {
 
   static DefaultLocationEnum? detect(TrufiLocation loc) {
     for (final e in DefaultLocationEnum.values) {
-      if (loc.type == e.type && loc.description == e.initLocation.description) {
+      if (loc.type.value == e.type && loc.description == e.initLocation.description) {
         return e;
       }
     }

@@ -100,8 +100,6 @@ class _FullScreenSearchModalState extends State<FullScreenSearchModal> {
     final theme = Theme.of(context);
     final localization = AppLocalization.of(context);
     final divider = Divider(
-      height: 8,
-      thickness: 8,
       color: theme.colorScheme.surfaceVariant,
     );
 
@@ -287,22 +285,12 @@ class _FullScreenSearchModalState extends State<FullScreenSearchModal> {
                           divider,
                           Padding(
                             padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
+                            child: Text(
                                   'Recent',
                                   style: theme.textTheme.titleSmall?.copyWith(
                                     fontWeight: FontWeight.w600,
                                   ),
                                 ),
-                                Icon(
-                                  Icons.info_outline,
-                                  size: 20,
-                                  color: theme.colorScheme.onSurfaceVariant,
-                                ),
-                              ],
-                            ),
                           ),
                         ],
                       ),

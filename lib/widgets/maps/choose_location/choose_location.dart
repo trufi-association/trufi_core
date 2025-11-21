@@ -1,10 +1,8 @@
 import 'dart:async';
-import 'dart:developer';
 import 'package:async/async.dart' as async;
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:trufi_core/consts.dart';
-import 'package:trufi_core/pages/home/widgets/routing_map/routing_map_controller.dart';
 
 import 'package:trufi_core/repositories/location/location_repository.dart';
 import 'package:trufi_core/screens/route_navigation/maps/maplibre_gl.dart';
@@ -167,7 +165,11 @@ class _ChooseLocationPageState extends State<ChooseLocationPage>
                         Navigator.of(context).pop(locationData);
                       } else if (position != null) {
                         Navigator.of(context).pop(
-                          TrufiLocation(description: '', position: position!),
+                          TrufiLocation(
+                            description: '',
+                            position: position!,
+                            type: TrufiLocationType.selectedOnMap,
+                          ),
                         );
                       }
                     },
@@ -245,7 +247,11 @@ class _ChooseLocationPageState extends State<ChooseLocationPage>
 
   Future<TrufiLocation> _fetchData(LatLng location) async {
     return locationRepository.reverseGeodecoding(location).catchError((error) {
-      return TrufiLocation(description: '', position: location);
+      return TrufiLocation(
+        description: '',
+        position: location,
+        type: TrufiLocationType.selectedOnMap,
+      );
     });
   }
 }

@@ -47,7 +47,7 @@ class LocationSearchResponse {
       description: name ?? 'Not description',
       position: latLng ?? LatLng(0, 0),
       address: street,
-      type: type,
+      type: TrufiLocationType.fromString(type),
     );
   }
 }

@@ -86,12 +86,14 @@ class _DialogEditLocationState extends State<DialogEditLocation> {
                         ),
                     itemBuilder: (BuildContext builderContext, int index) {
                       final isSelected =
-                          location.type == listIconsPlace.keys.elementAt(index);
+                          location.type.value == listIconsPlace.keys.elementAt(index);
                       return InkWell(
                         onTap: () {
                           setState(() {
                             location = location.copyWith(
-                              type: listIconsPlace.keys.elementAt(index),
+                              type: TrufiLocationType.fromString(
+                                listIconsPlace.keys.elementAt(index),
+                              ),
                             );
                           });
                         },

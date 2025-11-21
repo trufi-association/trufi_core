@@ -280,8 +280,11 @@ class TrufiMarker {
     widgetBytes = await ImageTool.widgetToBytes(this, context);
   }
 
-  TrufiLocation toLocation() =>
-      TrufiLocation(description: '', position: position);
+  TrufiLocation toLocation() => TrufiLocation(
+        description: '',
+        position: position,
+        type: TrufiLocationType.selectedOnMap,
+      );
 }
 
 class TrufiLine {
@@ -302,6 +305,47 @@ class TrufiLine {
   final double lineWidth;
   final bool activeDots;
   final bool visible;
+}
+
+/// Enum representing the type of a location
+enum TrufiLocationType {
+  /// Origin location for a route
+  origin('origin_location'),
+  
+  /// Destination location for a route
+  destination('destination_location'),
+  
+  /// Location selected directly on the map
+  selectedOnMap('selected_on_map'),
+  
+  /// Current GPS location
+  currentLocation('current_location'),
+  
+  /// Location from search results (Photon, etc.)
+  searchResult('search_result'),
+  
+  /// Default saved location (home, work, etc.)
+  defaultLocation('default_location'),
+  
+  /// Custom saved place
+  customPlace('custom_place'),
+  
+  /// Location from OpenStreetMap data
+  osmLocation('osm_location'),
+  
+  /// Unknown or unspecified type
+  unknown('unknown');
+
+  const TrufiLocationType(this.value);
+  final String value;
+
+  static TrufiLocationType fromString(String? value) {
+    if (value == null) return TrufiLocationType.unknown;
+    return TrufiLocationType.values.firstWhere(
+      (e) => e.value == value,
+      orElse: () => TrufiLocationType.unknown,
+    );
+  }
 }
 
 abstract class TrufiLayer {
@@ -460,15 +504,12 @@ abstract class TrufiLayer {
 }
 
 class TrufiLocation {
-  static const String origin = 'origin_location';
-  static const String destination = 'destination_location';
-
   final String description;
   final latlng.LatLng position;
   final List<String>? alternativeNames;
   final Map<String, String>? localizedNames;
   final String? address;
-  final String? type;
+  final TrufiLocationType type;
 
   TrufiLocation({
     required this.description,
@@ -476,7 +517,7 @@ class TrufiLocation {
     this.alternativeNames,
     this.localizedNames,
     this.address,
-    this.type,
+    this.type = TrufiLocationType.unknown,
   });
 
   TrufiLocation copyWith({
@@ -485,7 +526,7 @@ class TrufiLocation {
     List<String>? alternativeNames,
     Map<String, String>? localizedNames,
     String? address,
-    String? type,
+    TrufiLocationType? type,
   }) {
     return TrufiLocation(
       description: description ?? this.description,
@@ -511,7 +552,7 @@ class TrufiLocation {
       localizedNames: json[2].cast<String, String>() as Map<String, String>?,
       position: latlng.LatLng(json[3][1], json[3][0]),
       address: json[4] as String?,
-      type: json[5] as String?,
+      type: TrufiLocationType.fromString(json[5] as String?),
     );
   }
 
@@ -529,7 +570,7 @@ class TrufiLocation {
         (json['latitude'] as num).toDouble(),
         (json['longitude'] as num).toDouble(),
       ),
-      type: json['type'] as String?,
+      type: TrufiLocationType.fromString(json['type'] as String?),
       address: json['address'] as String?,
     );
   }
@@ -538,25 +579,33 @@ class TrufiLocation {
     'description': description,
     'latitude': position.latitude,
     'longitude': position.longitude,
-    'type': type,
+    'type': type.value,
     'address': address ?? '',
   };
 
   String displayName(AppLocalization localization) {
-    if (description.isEmpty) {
+    // Solo mostrar "Selected on map" si el tipo es específicamente 'selectedOnMap'
+    // y la descripción está vacía
+    if (type == TrufiLocationType.selectedOnMap && description.isEmpty) {
       return localization.translate(LocalizationKey.selectedOnMap);
     }
 
-    final detected = DefaultLocationExt.detect(this);
-    if (detected != null) {
-      final base = localization.translate(detected.l10nKey);
-      return isLatLngDefined
-          ? base
-          : localization.translateWithParams(
-              '${LocalizationKey.defaultLocationAdd.key}:$base',
-            );
+    // Si hay descripción, usarla (incluso si está vacía pero no es selectedOnMap)
+    if (description.isNotEmpty) {
+      final detected = DefaultLocationExt.detect(this);
+      if (detected != null) {
+        final base = localization.translate(detected.l10nKey);
+        return isLatLngDefined
+            ? base
+            : localization.translateWithParams(
+                '${LocalizationKey.defaultLocationAdd.key}:$base',
+              );
+      }
+      return [description, if (address?.isNotEmpty ?? false) address].join(', ');
     }
-    return [description, if (address?.isNotEmpty ?? false) address].join(', ');
+
+    // Fallback: si no hay descripción y no es selectedOnMap, mostrar coordenadas
+    return "${position.latitude.toStringAsFixed(5)}, ${position.longitude.toStringAsFixed(5)}";
   }
 
   @override
