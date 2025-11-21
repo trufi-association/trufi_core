@@ -19,7 +19,7 @@ import 'package:url_launcher/url_launcher.dart';
 ///  - Localization keys are referenced but safely fall back to strings
 ///    if the key is missing.
 class TicketsPage extends StatelessWidget {
-  static const String route = "/tickets";
+  static const String route = "tickets";
 
   /// Optional: deep link for exploring fares / store / web
   final String? exploreFaresUrl;

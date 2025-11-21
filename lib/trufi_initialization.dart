@@ -1,4 +1,6 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
+import 'package:flutter_web_plugins/url_strategy.dart';
 
 /// Initialize the Trufi app with loading screen and error handling
 /// 
@@ -22,6 +24,9 @@ void initializeTrufiApp({
   Widget Function(BuildContext context, Exception error, VoidCallback retry)? errorWidget,
 }) {
   WidgetsFlutterBinding.ensureInitialized();
+  if (kIsWeb) {
+    usePathUrlStrategy();
+  }
 
   runApp(
     _TrufiInitializationWrapper(

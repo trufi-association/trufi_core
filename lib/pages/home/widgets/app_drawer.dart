@@ -95,7 +95,7 @@ class AppDrawer extends StatelessWidget {
             ),
             onTap: () {
               Navigator.pop(context); // Close drawer
-              context.push(SavedPlacesPage.route);
+              context.go('/${SavedPlacesPage.route}');
             },
           ),
           if (showTickets)
@@ -112,7 +112,7 @@ class AppDrawer extends StatelessWidget {
               ),
               onTap: () {
                 Navigator.pop(context);
-                context.push(TicketsPage.route);
+                context.go('/${TicketsPage.route}');
               },
             ),
           if (additionalMenuItems != null) ...additionalMenuItems!,
@@ -130,10 +130,7 @@ class AppDrawer extends StatelessWidget {
             ),
             onTap: () {
               Navigator.pop(context); // Close drawer
-              context.push(
-                FeedbackPage.route,
-                extra: {'urlFeedback': 'https://www.trufi-association.org/'},
-              );
+              context.go('/${FeedbackPage.route}');
             },
           ),
           ListTile(
@@ -146,15 +143,7 @@ class AppDrawer extends StatelessWidget {
             ),
             onTap: () {
               Navigator.pop(context); // Close drawer
-              context.push(
-                AboutPage.route,
-                extra: {
-                  'appName': 'Kigali Movility',
-                  'cityName': 'Kigali',
-                  'urlRepository':
-                      'https://github.com/trufi-association/trufi_core',
-                },
-              );
+              context.go('/${AboutPage.route}');
             },
           ),
         ],

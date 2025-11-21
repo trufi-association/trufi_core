@@ -70,12 +70,9 @@ class TrufiApp extends StatelessWidget {
 
   GoRouter _buildDefaultRouter() {
     return GoRouter(
-      debugLogDiagnostics: true,
-      initialLocation: '/',
       routes: [
         GoRoute(
           path: '/',
-          name: 'home',
           builder: (context, state) {
             return Scaffold(
               drawer: drawer ??
@@ -90,135 +87,42 @@ class TrufiApp extends StatelessWidget {
               body: const RouteNavigationScreen(),
             );
           },
-        ),
-        GoRoute(
-          path: AboutPage.route,
-          name: 'about',
-          pageBuilder: (context, state) {
-            final extra = state.extra as Map<String, String>?;
-            return CustomTransitionPage(
-              key: state.pageKey,
-              child: AboutPage(
-                appName: extra?['appName'] ?? appName,
-                cityName: extra?['cityName'] ?? cityName ?? appName,
-                urlRepository: extra?['urlRepository'] ?? urlRepository,
-              ),
-              transitionsBuilder:
-                  (context, animation, secondaryAnimation, child) {
-                return SlideTransition(
-                  position: Tween<Offset>(
-                    begin: const Offset(1.0, 0.0),
-                    end: Offset.zero,
-                  ).animate(CurvedAnimation(
-                    parent: animation,
-                    curve: Curves.easeInOut,
-                  )),
-                  child: child,
+          routes: [
+            GoRoute(
+              path: AboutPage.route,
+              builder: (context, state) {
+                return AboutPage(
+                  appName: appName,
+                  cityName: cityName ?? appName,
+                  urlRepository: urlRepository,
                 );
               },
-            );
-          },
-        ),
-        GoRoute(
-          path: FeedbackPage.route,
-          name: 'feedback',
-          pageBuilder: (context, state) {
-            final extra = state.extra as Map<String, String>?;
-            return CustomTransitionPage(
-              key: state.pageKey,
-              child: FeedbackPage(
-                urlFeedback: extra?['urlFeedback'] ?? urlFeedback,
-              ),
-              transitionsBuilder:
-                  (context, animation, secondaryAnimation, child) {
-                return SlideTransition(
-                  position: Tween<Offset>(
-                    begin: const Offset(1.0, 0.0),
-                    end: Offset.zero,
-                  ).animate(CurvedAnimation(
-                    parent: animation,
-                    curve: Curves.easeInOut,
-                  )),
-                  child: child,
+            ),
+            GoRoute(
+              path: FeedbackPage.route,
+              builder: (context, state) {
+                return FeedbackPage(
+                  urlFeedback: urlFeedback,
                 );
               },
-            );
-          },
-        ),
-        GoRoute(
-          path: SavedPlacesPage.route,
-          name: 'saved-places',
-          pageBuilder: (context, state) {
-            return CustomTransitionPage(
-              key: state.pageKey,
-              child: const SavedPlacesPage(),
-              transitionsBuilder:
-                  (context, animation, secondaryAnimation, child) {
-                return SlideTransition(
-                  position: Tween<Offset>(
-                    begin: const Offset(1.0, 0.0),
-                    end: Offset.zero,
-                  ).animate(CurvedAnimation(
-                    parent: animation,
-                    curve: Curves.easeInOut,
-                  )),
-                  child: child,
+            ),
+            GoRoute(
+              path: SavedPlacesPage.route,
+              builder: (context, state) {
+                return const SavedPlacesPage();
+              },
+            ),
+            GoRoute(
+              path: TicketsPage.route,
+              builder: (context, state) {
+                return TicketsPage(
+                  exploreFaresUrl: exploreFaresUrl,
                 );
               },
-            );
-          },
-        ),
-        GoRoute(
-          path: TicketsPage.route,
-          name: 'tickets',
-          pageBuilder: (context, state) {
-            final extra = state.extra as Map<String, String>?;
-            return CustomTransitionPage(
-              key: state.pageKey,
-              child: TicketsPage(
-                exploreFaresUrl: extra?['exploreFaresUrl'] ?? exploreFaresUrl,
-              ),
-              transitionsBuilder:
-                  (context, animation, secondaryAnimation, child) {
-                return SlideTransition(
-                  position: Tween<Offset>(
-                    begin: const Offset(1.0, 0.0),
-                    end: Offset.zero,
-                  ).animate(CurvedAnimation(
-                    parent: animation,
-                    curve: Curves.easeInOut,
-                  )),
-                  child: child,
-                );
-              },
-            );
-          },
+            ),
+          ],
         ),
       ],
-      errorBuilder: (context, state) => Scaffold(
-        appBar: AppBar(title: const Text('Page Not Found')),
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(Icons.error_outline, size: 48),
-              const SizedBox(height: 16),
-              Text(
-                '404 - Page not found',
-                style: Theme.of(context).textTheme.headlineSmall,
-              ),
-              const SizedBox(height: 8),
-              Text('The page "${state.uri}" does not exist.'),
-              const SizedBox(height: 24),
-              FilledButton.icon(
-                onPressed: () => context.go('/'),
-                icon: const Icon(Icons.home),
-                label: const Text('Go Home'),
-              ),
-            ],
-          ),
-        ),
-      ),
     );
   }
 }

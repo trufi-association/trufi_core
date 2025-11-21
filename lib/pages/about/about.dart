@@ -5,7 +5,7 @@ import 'package:trufi_core/utils/packge_info_platform.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class AboutPage extends StatelessWidget {
-  static const String route = "/about";
+  static const String route = "about";
 
   const AboutPage({
     super.key,
