@@ -12,6 +12,7 @@ import 'package:trufi_core/screens/route_navigation/map_layers/fit_camera_layer.
 import 'package:trufi_core/screens/route_navigation/maps/flutter_map.dart';
 import 'package:trufi_core/screens/route_navigation/maps/trufi_map_controller.dart';
 import 'package:trufi_core/screens/route_navigation/maps/maplibre_gl.dart';
+import 'package:trufi_core/screens/route_navigation/widgets/map_type_button.dart';
 import 'package:trufi_core/widgets/app_lifecycle_reactor.dart';
 import 'package:trufi_core/widgets/bottom_sheet/trufi_bottom_sheet.dart';
 import 'package:trufi_core/widgets/bottom_sheet/location_selector_bottom_sheet.dart';
@@ -350,30 +351,89 @@ class _RouteNavigationScreenState extends State<RouteNavigationScreen> {
                             padding: const EdgeInsets.only(top: 100, right: 8),
                             child: Align(
                               alignment: Alignment.topRight,
-                              child: ValueListenableBuilder<bool>(
-                                valueListenable:
-                                    fitCameraLayer.outOfFocusNotifier,
-                                builder: (context, outOfFocus, _) {
-                                  if (!outOfFocus) {
-                                    return const SizedBox.shrink();
-                                  }
-                                  return Tooltip(
-                                    message: 'Fuera de foco: re-centrar',
-                                    child: IconButton(
-                                      iconSize: 28,
-                                      icon: const Icon(
-                                        Icons.crop_free,
-                                        color: Colors.redAccent,
-                                      ),
-                                      style: const ButtonStyle(
-                                        backgroundColor: WidgetStatePropertyAll(
-                                          Colors.white,
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  // Map type button
+                                  MapTypeButton(
+                                    currentMapIndex: showMapIndex,
+                                    mapOptions: [
+                                      MapTypeOption(
+                                        id: 'maplibre',
+                                        name: 'MapLibre GL',
+                                        description:
+                                            'Mapa vectorial con estilo Liberty',
+                                        previewImage: Container(
+                                          color: Colors.blue.shade100,
+                                          child: const Center(
+                                            child: Icon(Icons.map, size: 40),
+                                          ),
                                         ),
                                       ),
-                                      onPressed: fitCameraLayer.reFitCamera,
-                                    ),
-                                  );
-                                },
+                                      MapTypeOption(
+                                        id: 'osm',
+                                        name: 'OpenStreetMap',
+                                        description:
+                                            'Mapa de teselas estándar de OSM',
+                                        previewImage: Container(
+                                          color: Colors.green.shade100,
+                                          child: const Center(
+                                            child: Icon(Icons.map_outlined,
+                                                size: 40),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                    onMapTypeChanged: (index) {
+                                      setState(() {
+                                        showMapIndex = index;
+                                      });
+                                    },
+                                  ),
+                                  const SizedBox(height: 8),
+                                  // Re-center button
+                                  ValueListenableBuilder<bool>(
+                                    valueListenable:
+                                        fitCameraLayer.outOfFocusNotifier,
+                                    builder: (context, outOfFocus, _) {
+                                      if (!outOfFocus) {
+                                        return const SizedBox.shrink();
+                                      }
+                                      return Material(
+                                        elevation: 4,
+                                        borderRadius: BorderRadius.circular(8),
+                                        child: Tooltip(
+                                          message: 'Re-centrar mapa',
+                                          child: IconButton(
+                                            iconSize: 24,
+                                            icon: const Icon(
+                                              Icons.crop_free,
+                                              color: Colors.blueAccent,
+                                            ),
+                                            style: ButtonStyle(
+                                              backgroundColor:
+                                                  const WidgetStatePropertyAll(
+                                                Colors.white,
+                                              ),
+                                              padding:
+                                                  const WidgetStatePropertyAll(
+                                                EdgeInsets.all(12),
+                                              ),
+                                              shape: WidgetStatePropertyAll(
+                                                RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(8),
+                                                ),
+                                              ),
+                                            ),
+                                            onPressed:
+                                                fitCameraLayer.reFitCamera,
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ],
                               ),
                             ),
                           ),

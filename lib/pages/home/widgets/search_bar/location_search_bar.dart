@@ -427,17 +427,6 @@ print(origin);
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 2),
                   child: IconButton(
-                    icon: const Icon(Icons.more_vert),
-                    color: theme.colorScheme.onSurface,
-                    visualDensity: VisualDensity.compact,
-                    padding: EdgeInsets.zero,
-                    onPressed: () {},
-                    tooltip: 'Menú',
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 2),
-                  child: IconButton(
                     icon: const Icon(Icons.swap_vert),
                     color: theme.colorScheme.onSurface,
                     visualDensity: VisualDensity.compact,

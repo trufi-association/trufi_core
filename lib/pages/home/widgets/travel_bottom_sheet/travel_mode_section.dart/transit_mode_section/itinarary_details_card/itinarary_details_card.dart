@@ -54,14 +54,6 @@ class ItineraryDetailsCard extends StatelessWidget {
               ),
             ),
             Spacer(),
-            TrufiIconButton(
-              onPressed: () {},
-              icon: Transform.rotate(
-                angle: math.pi / 2,
-                child: Icon(Icons.tune),
-              ),
-              isCompact: true,
-            ),
             SizedBox(width: 4),
             TrufiIconButton(
               onPressed: () {},
